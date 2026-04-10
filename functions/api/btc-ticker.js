@@ -1,4 +1,3 @@
-cat > ~/btb/functions/api/btc-ticker.js << 'EOF'
 // BTC 实时价格 - 使用 CoinGecko API
 export async function onRequest(context) {
   const url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true';
@@ -36,4 +35,3 @@ function jsonResponse(data, status = 200) {
     },
   });
 }
-EOF
