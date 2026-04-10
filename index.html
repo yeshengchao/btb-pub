@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BTB PUBLIC — 发现市场拐点</title>
+<meta name="description" content="BTB Public 实时追踪 BTC 周期、宏观流动性、链上数据与美股七姐妹估值，帮你发现市场拐点。">
+<meta property="og:title" content="BTB Public — 发现市场拐点">
+<meta property="og:url" content="https://www.btb.pub">
+<meta property="og:type" content="website">
+<meta property="og:description" content="BTB Public 实时追踪 BTC 周期、宏观流动性、链上数据与美股七姐妹估值，帮你发现市场拐点。">
+<meta name="theme-color" content="#060914">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='url(%23g)'/><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop stop-color='%234f8ef7'/><stop offset='1' stop-color='%239b7fff'/></linearGradient></defs><text x='16' y='22' text-anchor='middle' fill='white' font-size='18' font-weight='bold' font-family='monospace'>B</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://api.binance.com">
+<link rel="dns-prefetch" href="https://api.alternative.me">
+<link rel="dns-prefetch" href="https://api.coingecko.com">
+<link rel="dns-prefetch" href="https://api.allorigins.win">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap"></noscript>
+<style>
+/* ═══════════ DARK TOKENS (default) ═══════════ */
+:root {
+  --bg:       #060914;
+  --surface:  #0b1022;
+  --card:     #0d1528;
+  --card-hi:  #111e35;
+  --line:     #162035;
+  --line-hi:  #1f3050;
+  --t1: #edf0f8;
+  --t2: #6e7f9c;
+  --t3: #354260;
+  --shadow: rgba(0,0,0,.4);
+  --glow-bg: rgba(79,142,247,.06);
+  --glow-bg2: rgba(155,127,255,.045);
+  --grid-c: rgba(79,142,247,.022);
+}
+/* ═══════════ LIGHT TOKENS ═══════════ */
+[data-theme="light"] {
+  --bg:       #eef2f9;
+  --surface:  #e2e8f4;
+  --card:     #ffffff;
+  --card-hi:  #f4f7fd;
+  --line:     #cdd8eb;
+  --line-hi:  #b5c5dc;
+  --t1: #0a1528;
+  --t2: #4a5878;
+  --t3: #94a6c0;
+  --shadow: rgba(0,0,0,.08);
+  --glow-bg: rgba(79,142,247,.04);
+  --glow-bg2: rgba(155,127,255,.03);
+  --grid-c: rgba(79,142,247,.04);
+}
+
+/* ═══════════ SHARED TOKENS ═══════════ */
+:root, [data-theme="light"] {
+  --buy:        #00d68f;
+  --buy-dim:    rgba(0,214,143,.1);
+  --buy-bd:     rgba(0,214,143,.25);
+  --hold:       #f5a623;
+  --hold-dim:   rgba(245,166,35,.1);
+  --hold-bd:    rgba(245,166,35,.25);
+  --risk:       #ff4d6a;
+  --risk-dim:   rgba(255,77,106,.1);
+  --risk-bd:    rgba(255,77,106,.25);
+  --accent:     #4f8ef7;
+  --accent-dim: rgba(79,142,247,.1);
+  --violet:     #9b7fff;
+  --r: 14px; --r-sm: 8px;
+  --mono: 'Space Mono', monospace;
+  --sans: 'Space Grotesk', system-ui, sans-serif;
+}
+
+/* ═══════════ BASE ═══════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  background-color: var(--bg);
+  color: var(--t1);
+  font-family: var(--sans);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background-color .3s, color .3s;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 800px 500px at 10% 15%, var(--glow-bg) 0%, transparent 70%),
+    radial-gradient(ellipse 600px 400px at 90% 80%, var(--glow-bg2) 0%, transparent 70%),
+    linear-gradient(var(--grid-c) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-c) 1px, transparent 1px);
+  background-size: auto, auto, 48px 48px, 48px 48px;
+}
+
+/* ═══════════ KEYFRAMES ═══════════ */
+@keyframes blink   { 0%,100%{opacity:1} 50%{opacity:.2} }
+@keyframes fade-up { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+@keyframes bar-flow { 0%{background-position:0% 50%} 100%{background-position:200% 50%} }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(0,214,143,.4); }
+  70% { box-shadow: 0 0 0 6px rgba(0,214,143,0); }
+  100% { box-shadow: 0 0 0 0 rgba(0,214,143,0); }
+}
+.fade-in { animation: fade-up .4s ease both; }
+
+/* ═══════════ SCROLLBAR ═══════════ */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--line-hi); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--t3); }
+html { scrollbar-color: var(--line-hi) var(--bg); }
+
+/* ═══════════ SKELETON ═══════════ */
+.skeleton {
+  background: linear-gradient(90deg, var(--line) 25%, var(--line-hi) 50%, var(--line) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--r-sm);
+}
+.skel-card {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--r); padding: 20px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.skel-line { height: 12px; border-radius: 4px; }
+.skel-line.w60 { width: 60%; }
+.skel-line.w40 { width: 40%; }
+.skel-line.w80 { width: 80%; }
+.skel-line.h28 { height: 28px; width: 50%; }
+.skel-bar { height: 5px; width: 100%; border-radius: 3px; }
+
+/* ═══════════ STALE / ERROR STATE ═══════════ */
+.qc-stale .qc-val { opacity: .5; }
+.qc-stale::after {
+  content: ''; position: absolute; top: 12px; right: 12px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--hold); animation: blink 2s infinite;
+}
+.qc { position: relative; }
+
+/* ═══════════ HEADER ═══════════ */
+header {
+  position: sticky; top: 0; z-index: 200;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(20px) saturate(1.5);
+  border-bottom: 1px solid var(--line);
+  transition: background .3s, border-color .3s;
+}
+.hdr {
+  max-width: 1460px; margin: 0 auto;
+  padding: 0 24px; height: 60px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.logo { display: flex; align-items: center; gap: 11px; text-decoration: none; flex-shrink: 0; }
+.logo-mark {
+  width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--accent), var(--violet));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 800; color: #fff; font-family: var(--mono);
+  position: relative;
+}
+.logo-mark::after {
+  content: ''; position: absolute; bottom: -2px; right: -2px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--buy); border: 2px solid var(--bg);
+  animation: blink 2s infinite;
+  transition: border-color .3s;
+}
+.logo-text { display: flex; flex-direction: column; gap: 1px; }
+.logo-name { font-size: 16px; font-weight: 700; color: var(--t1); letter-spacing: -.3px; line-height: 1; transition: color .3s; }
+.logo-name em { color: var(--accent); font-style: normal; }
+.logo-slogan { font-size: 10px; color: var(--t3); letter-spacing: .08em; transition: color .3s; }
+
+.hdr-right { display: flex; align-items: center; gap: 10px; flex-wrap: nowrap; }
+.live-pill {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--buy-dim); border: 1px solid var(--buy-bd);
+  padding: 4px 11px; border-radius: 20px;
+  font-size: 12px; font-weight: 500; color: var(--buy);
+}
+.live-pill i {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--buy); box-shadow: 0 0 6px var(--buy);
+  animation: pulse-ring 2s infinite; flex-shrink: 0;
+}
+#ts { font-size: 11px; color: var(--t3); font-family: var(--mono); white-space: nowrap; }
+
+/* header buttons */
+.hdr-btn {
+  background: none; border: 1px solid var(--line);
+  color: var(--t2); font-size: 13px; padding: 5px 12px;
+  border-radius: var(--r-sm); cursor: pointer;
+  transition: all .2s; font-family: var(--sans); font-weight: 500;
+  white-space: nowrap;
+}
+.hdr-btn:hover { border-color: var(--accent); color: var(--accent); }
+.hdr-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+
+/* ═══════════ MAIN ═══════════ */
+main { max-width: 1460px; margin: 0 auto; padding: 32px 24px 72px; position: relative; z-index: 1; }
+
+/* ═══════════ SECTION LABEL ═══════════ */
+.sec {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .15em;
+  color: var(--t3); margin-bottom: 16px; margin-top: 40px;
+  transition: color .3s;
+}
+.sec::after { content: ''; flex: 1; height: 1px; background: var(--line); transition: background .3s; }
+.sec:first-of-type { margin-top: 0; }
+
+/* ═══════════ HERO ═══════════ */
+.hero {
+  border-radius: 18px; overflow: hidden;
+  background: var(--card); border: 1px solid var(--line);
+  margin-bottom: 24px;
+  transition: background .3s, border-color .3s;
+  box-shadow: 0 4px 32px var(--shadow);
+}
+.hero-bar {
+  height: 2px;
+  background: linear-gradient(90deg, var(--buy), var(--accent) 33%, var(--violet) 66%, var(--hold));
+  background-size: 200% 100%;
+  animation: bar-flow 5s linear infinite;
+}
+.hero-body {
+  display: grid; grid-template-columns: 240px 1fr;
+  gap: 24px; align-items: center; padding: 32px 36px;
+}
+/* left */
+.hero-l { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.hero-eyebrow { font-size: 10px; text-transform: uppercase; letter-spacing: .18em; color: var(--t3); }
+.status-card {
+  width: 190px; padding: 16px 0 14px; border-radius: 12px; text-align: center;
+  transition: all .5s;
+}
+.status-card.BUY  { background: var(--buy-dim);  border: 1px solid var(--buy-bd); }
+.status-card.HOLD { background: var(--hold-dim); border: 1px solid var(--hold-bd); }
+.status-card.RISK { background: var(--risk-dim); border: 1px solid var(--risk-bd); }
+.status-word { font-size: 34px; font-weight: 700; letter-spacing: -1px; display: block; margin-bottom: 3px; }
+.status-card.BUY  .status-word { color: var(--buy); }
+.status-card.HOLD .status-word { color: var(--hold); }
+.status-card.RISK .status-word { color: var(--risk); }
+.status-sub { font-size: 11px; color: var(--t2); }
+.phase-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;
+  background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(79,142,247,.2);
+}
+.hero-tag { font-size: 12px; color: var(--t2); text-align: center; line-height: 1.6; max-width: 190px; }
+/* right */
+.hero-r {}
+.score-head {
+  display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;
+}
+.score-lbl { font-size: 12px; color: var(--t2); }
+.score-lbl small { display: block; font-size: 10px; color: var(--t3); margin-top: 2px; }
+.score-num { font-size: 52px; font-weight: 700; font-family: var(--mono); color: var(--t1); line-height: 1; }
+.score-bar {
+  height: 10px; border-radius: 5px; position: relative; margin-bottom: 6px;
+  background: linear-gradient(90deg, var(--buy) 0% 28%, var(--hold) 40% 58%, var(--risk) 70% 100%);
+}
+.score-bar::before {
+  content: ''; position: absolute; inset: 0; border-radius: 5px;
+  background: color-mix(in srgb, var(--bg) 50%, transparent);
+}
+.score-thumb {
+  position: absolute; top: 50%; transform: translate(-50%,-50%);
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; border: 3px solid var(--card);
+  box-shadow: 0 2px 10px rgba(0,0,0,.5);
+  transition: left 1.2s cubic-bezier(.34,1.4,.64,1), border-color .3s;
+  z-index: 2;
+}
+.bar-zones {
+  display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 20px;
+}
+.bar-zones span:nth-child(1) { color: var(--buy); }
+.bar-zones span:nth-child(2) { color: var(--t3); }
+.bar-zones span:nth-child(3) { color: var(--risk); }
+#score-spark { width: 100%; height: 48px; border-radius: 6px; opacity: .85; margin-bottom: 12px; }
+.hero-bar.refreshed { animation: bar-flow .8s linear; }
+.pills { display: flex; flex-wrap: wrap; gap: 9px; }
+.pill {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface); border: 1px solid var(--line);
+  padding: 7px 13px; border-radius: var(--r-sm); font-size: 12px; color: var(--t2);
+  transition: background .3s, border-color .3s;
+}
+.pill strong { color: var(--t1); font-family: var(--mono); font-size: 14px; }
+.pill-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+/* ═══════════ QUICK STATS ═══════════ */
+.quick { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+.qc {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--r); padding: 18px 20px;
+  display: flex; flex-direction: column; gap: 5px;
+  transition: all .2s; box-shadow: 0 2px 12px var(--shadow);
+}
+.qc:hover { border-color: var(--line-hi); background: var(--card-hi); transform: translateY(-2px); box-shadow: 0 8px 24px var(--shadow); }
+.qc-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--t3); }
+.qc-val { font-size: 27px; font-weight: 700; font-family: var(--mono); color: var(--t1); line-height: 1.1; }
+.qc-sub { font-size: 13px; font-weight: 500; }
+.qc-sub.up { color: var(--buy); } .qc-sub.down { color: var(--risk); } .qc-sub.neu { color: var(--t2); }
+
+/* ═══════════ INDICATOR GRID ═══════════ */
+.ig { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+.ic {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--r); padding: 20px;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: all .2s; position: relative; overflow: hidden;
+  box-shadow: 0 2px 12px var(--shadow);
+}
+.ic::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 3px; height: 100%; transition: background .4s;
+}
+.ic.BUY::before  { background: var(--buy); }
+.ic.HOLD::before { background: var(--hold); }
+.ic.RISK::before { background: var(--risk); }
+.ic:hover { border-color: var(--line-hi); background: var(--card-hi); transform: translateY(-2px); box-shadow: 0 8px 24px var(--shadow); }
+.ic:hover::before { width: 4px; }
+.ic-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.ic-name { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--t3); }
+.ic-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+.ic-badge.BUY  { color: var(--buy);    background: var(--buy-dim);    border: 1px solid var(--buy-bd); }
+.ic-badge.HOLD { color: var(--hold);   background: var(--hold-dim);   border: 1px solid var(--hold-bd); }
+.ic-badge.RISK { color: var(--risk);   background: var(--risk-dim);   border: 1px solid var(--risk-bd); }
+.ic-badge.NEU  { color: var(--accent); background: var(--accent-dim); }
+.ic-val { font-size: 30px; font-weight: 700; font-family: var(--mono); color: var(--t1); line-height: 1; }
+.gauge-track { height: 5px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.gauge-fill {
+  height: 100%; border-radius: 3px;
+  transition: width 1.4s cubic-bezier(.34,1.1,.64,1);
+}
+.gauge-fill.buy  { background: var(--buy);    box-shadow: 0 0 8px rgba(0,214,143,.3); }
+.gauge-fill.hold { background: var(--hold);   box-shadow: 0 0 8px rgba(245,166,35,.3); }
+.gauge-fill.risk { background: var(--risk);   box-shadow: 0 0 8px rgba(255,77,106,.3); }
+.gauge-fill.neu  { background: var(--accent); }
+.gauge-zl { display: flex; justify-content: space-between; margin-top: 5px; font-size: 10px; color: var(--t3); }
+.ic-desc { font-size: 12px; color: var(--t2); line-height: 1.6; border-top: 1px solid var(--line); padding-top: 10px; }
+.ic-src  { font-size: 10px; color: var(--t3); margin-top: 3px; }
+
+/* ═══════════ MAG 7 ═══════════ */
+.m7 { display: grid; grid-template-columns: repeat(7,1fr); gap: 12px; content-visibility: auto; contain-intrinsic-size: auto 200px; }
+.sc {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--r); padding: 16px 12px;
+  text-align: center; transition: all .2s;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  box-shadow: 0 2px 12px var(--shadow);
+}
+.sc:hover { border-color: var(--line-hi); transform: translateY(-3px); background: var(--card-hi); }
+.sc-tick  { font-size: 14px; font-weight: 700; font-family: var(--mono); }
+.sc-name  { font-size: 9px; color: var(--t3); margin-bottom: 6px; }
+.sc-price { font-size: 16px; font-weight: 700; font-family: var(--mono); }
+.sc-chg   { font-size: 12px; font-weight: 500; margin-bottom: 6px; }
+.sc-chg.up { color: var(--buy); } .sc-chg.down { color: var(--risk); }
+.sc-div   { width: 100%; height: 1px; background: var(--line); margin: 3px 0; }
+.sc-row   { font-size: 11px; color: var(--t2); }
+.sc-row strong { color: var(--t1); font-family: var(--mono); }
+.sc-hist  { font-size: 10px; color: var(--t3); margin-bottom: 6px; }
+.sc-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px; }
+.sc-badge.BUY  { color: var(--buy);  background: var(--buy-dim); }
+.sc-badge.HOLD { color: var(--hold); background: var(--hold-dim); }
+.sc-badge.RISK { color: var(--risk); background: var(--risk-dim); }
+.sc-live { font-size: 9px; margin-top: 3px; }
+
+/* ═══════════ SIGNAL FEED ═══════════ */
+.feed { display: flex; flex-direction: column; gap: 8px; content-visibility: auto; contain-intrinsic-size: auto 400px; }
+.fi {
+  display: grid; grid-template-columns: 95px 26px 1fr auto;
+  align-items: center; gap: 13px;
+  background: var(--card); border: 1px solid var(--line);
+  border-left: 2px solid; border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  padding: 12px 16px 12px 14px; transition: background .2s;
+  box-shadow: 0 1px 8px var(--shadow);
+}
+.fi:hover { background: var(--card-hi); }
+.fi.bull { border-left-color: var(--buy); }
+.fi.bear { border-left-color: var(--risk); }
+.fi.neu  { border-left-color: var(--accent); }
+.fi-time  { font-size: 11px; font-family: var(--mono); color: var(--t3); }
+.fi-icon  { font-size: 16px; }
+.fi-title { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+.fi-desc  { font-size: 12px; color: var(--t2); line-height: 1.4; }
+.fi-tag {
+  font-size: 11px; font-weight: 700; padding: 3px 10px;
+  border-radius: 20px; white-space: nowrap;
+}
+.fi-tag.bull { color: var(--buy);    background: var(--buy-dim); }
+.fi-tag.bear { color: var(--risk);   background: var(--risk-dim); }
+.fi-tag.neu  { color: var(--accent); background: var(--accent-dim); }
+
+/* ═══════════ ERROR BANNER ═══════════ */
+.api-warn {
+  background: rgba(245,166,35,.1); border: 1px solid rgba(245,166,35,.3);
+  border-radius: var(--r-sm); padding: 10px 16px; font-size: 12px; color: var(--hold);
+  margin-bottom: 16px; display: none;
+}
+.api-warn.show { display: block; }
+
+/* ═══════════ FOOTER ═══════════ */
+footer {
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--line); padding: 28px 24px;
+  max-width: 1460px; margin: 0 auto;
+  transition: border-color .3s;
+}
+.ft {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 14px;
+}
+.ft-brand { display: flex; flex-direction: column; gap: 3px; }
+.ft-name { font-size: 14px; font-weight: 700; color: var(--t1); }
+.ft-name em { color: var(--accent); font-style: normal; }
+.ft-slogan { font-size: 11px; color: var(--t3); }
+.ft-links { display: flex; gap: 18px; font-size: 12px; flex-wrap: wrap; }
+.ft-links a { color: var(--t2); text-decoration: none; transition: color .2s; }
+.ft-links a:hover { color: var(--accent); }
+.ft-disc { font-size: 11px; color: var(--t3); text-align: right; line-height: 1.6; }
+
+/* ═══════════ RESPONSIVE ═══════════ */
+@media (max-width: 1280px) {
+  .m7 { grid-template-columns: repeat(4,1fr); }
+  .ig { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 960px) {
+  .hero-body { grid-template-columns: 1fr; gap: 16px; }
+  .hero-l { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 12px; }
+  .hero-eyebrow { width: 100%; text-align: center; }
+  .hero-tag { max-width: 100%; }
+  .quick { grid-template-columns: repeat(2,1fr); }
+  .m7 { grid-template-columns: repeat(3,1fr); }
+  .fi { grid-template-columns: 80px 22px 1fr; }
+  .fi-tag { display: none; }
+}
+@media (max-width: 640px) {
+  /* 移除昂贵的背景网格，减少移动端 GPU 开销 */
+  body::before { background: radial-gradient(ellipse 400px 300px at 10% 15%, var(--glow-bg) 0%, transparent 70%); background-size: auto; }
+  /* 减少移动端动画，提升性能 */
+  .hero-bar { animation: none; }
+  header { backdrop-filter: blur(12px); }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-delay: 0.01ms !important; }
+  .logo-mark::after, .live-pill i { animation: blink 2s infinite !important; }
+  .skeleton { animation: shimmer 1.5s ease-in-out infinite !important; }
+
+  main { padding: 16px 10px 40px; }
+
+  /* ── 移动端 Header 优化 ── */
+  .hdr { padding: 0 10px; height: 50px; gap: 8px; }
+  .logo-mark { width: 28px; height: 28px; font-size: 13px; }
+  .logo-name { font-size: 14px; }
+  .logo-slogan { display: none; }
+  .hdr-right { gap: 6px; }
+  /* 移动端隐藏实时标签和时间戳，腾出空间给按钮 */
+  .live-pill { display: none; }
+  #ts { display: none; }
+  /* 按钮确保可见且易点击（≥44px触摸目标） */
+  .hdr-btn { min-width: 40px; min-height: 40px; padding: 6px 10px; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; }
+  .hdr-btn span.hdr-label { display: none; }
+
+  .hero { border-radius: 12px; margin-bottom: 16px; }
+  .hero-body { padding: 16px 12px; gap: 12px; }
+  .hero-bar { height: 2px; }
+  .status-card { width: 160px; padding: 12px 0 10px; }
+  .status-word { font-size: 28px; }
+  .score-num { font-size: 36px; }
+  .score-lbl { font-size: 11px; }
+  .score-lbl small { font-size: 9px; }
+  .pill { padding: 5px 10px; font-size: 11px; }
+  .pill strong { font-size: 12px; }
+  #score-spark { height: 36px; }
+  .ig { grid-template-columns: 1fr; gap: 10px; }
+  .ic { padding: 14px; gap: 8px; }
+  .ic-val { font-size: 22px; }
+  .ic-desc { font-size: 11px; }
+  .m7 { grid-template-columns: repeat(2,1fr); gap: 8px; }
+  .sc { padding: 12px 8px; }
+  .sc-tick { font-size: 12px; }
+  .sc-price { font-size: 14px; }
+  .quick { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .qc { padding: 14px 12px; }
+  .qc-val { font-size: 22px; }
+  .sec { margin-top: 24px; margin-bottom: 12px; font-size: 10px; }
+  .fi { grid-template-columns: 60px 20px 1fr; gap: 8px; padding: 10px 12px 10px 10px; }
+  .fi-time { font-size: 10px; }
+  .fi-title { font-size: 13px; }
+  .fi-desc { font-size: 11px; }
+  .ft { flex-direction: column; gap: 10px; }
+  .ft-disc { text-align: left; }
+  /* 减少移动端 box-shadow */
+  .ic, .qc, .sc, .fi { box-shadow: 0 1px 4px var(--shadow); }
+  .hero { box-shadow: 0 2px 12px var(--shadow); }
+  .ic:hover, .qc:hover, .sc:hover { transform: none; box-shadow: 0 1px 4px var(--shadow); }
+}
+@media (max-width: 420px) {
+  .hdr { padding: 0 8px; gap: 6px; }
+  .hdr-right { gap: 4px; }
+  .hdr-btn { min-width: 36px; min-height: 36px; padding: 4px 8px; font-size: 12px; }
+  .logo-text { display: none; }
+  .m7 { grid-template-columns: repeat(2,1fr); }
+  .quick { grid-template-columns: 1fr; }
+  .fi { grid-template-columns: 50px 1fr; }
+  .fi-icon { display: none; }
+  .hero-l { gap: 8px; }
+  .pills { gap: 6px; }
+  .pill { padding: 4px 8px; font-size: 10px; }
+  .pill strong { font-size: 11px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr">
+    <a href="https://www.btb.pub/" class="logo">
+      <div class="logo-mark">B</div>
+      <div class="logo-text">
+        <div class="logo-name">BTB <em>Public</em></div>
+        <div class="logo-slogan" data-i18n="slogan">发现市场拐点</div>
+      </div>
+    </a>
+    <div class="hdr-right">
+      <div class="live-pill"><i></i><span data-i18n="live">实时</span></div>
+      <span id="ts" data-i18n-id="ts">--</span>
+      <button class="hdr-btn" id="btn-lang" onclick="toggleLang()">EN</button>
+      <button class="hdr-btn" id="btn-theme" onclick="toggleTheme()">☀</button>
+      <button class="hdr-btn" onclick="refresh()"><span data-i18n="refresh">↺ 刷新</span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- API WARNING -->
+  <div class="api-warn" id="api-warn"></div>
+
+  <!-- HERO -->
+  <div class="hero fade-in">
+    <div class="hero-bar"></div>
+    <div class="hero-body">
+      <div class="hero-l">
+        <div class="hero-eyebrow" data-i18n="assessment">综合拐点评估</div>
+        <div class="status-card HOLD" id="status-card">
+          <span class="status-word" id="status-word">--</span>
+          <span class="status-sub" data-i18n="ind_count">综合 12 项指标</span>
+        </div>
+        <div class="phase-tag" id="phase-tag">⏳ <span data-i18n="loading">加载中</span></div>
+        <div class="hero-tag" id="hero-tag" data-i18n="tag_loading">正在获取市场数据…</div>
+      </div>
+      <div class="hero-r">
+        <div class="score-head">
+          <div class="score-lbl">
+            <span data-i18n="score_lbl">拐点风险评分</span>
+            <small data-i18n="score_hint">0 = 历史底部 · 100 = 极度高估</small>
+          </div>
+          <div class="score-num" id="score-num">--</div>
+        </div>
+        <div class="score-bar"><div class="score-thumb" id="score-thumb" style="left:50%"></div></div>
+        <div class="bar-zones">
+          <span data-i18n="zone_buy_r">买入区 &lt;40</span>
+          <span data-i18n="zone_hold_r">持有区 40–65</span>
+          <span data-i18n="zone_risk_r">风险区 &gt;65</span>
+        </div>
+        <canvas id="score-spark"></canvas>
+        <div class="pills">
+          <div class="pill"><div class="pill-dot" style="background:var(--buy)"></div><span data-i18n="p_btc">BTC</span>&nbsp;<strong id="p-btc">--</strong></div>
+          <div class="pill"><div class="pill-dot" style="background:var(--hold)"></div><span data-i18n="p_fg">恐惧贪婪</span>&nbsp;<strong id="p-fg">--</strong></div>
+          <div class="pill"><div class="pill-dot" style="background:var(--accent)"></div><span data-i18n="p_mcap">总市值</span>&nbsp;<strong id="p-mcap">--</strong></div>
+          <div class="pill"><div class="pill-dot" style="background:var(--violet)"></div><span data-i18n="p_dom">BTC主导</span>&nbsp;<strong id="p-dom">--</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK STATS -->
+  <div class="sec"><span data-i18n="sec_live">📡 实时行情</span></div>
+  <div class="quick">
+    <div class="qc"><div class="qc-lbl" data-i18n="btc_price">Bitcoin 价格</div><div class="qc-val" id="q-btc">--</div><div class="qc-sub neu" id="q-btc-c" data-i18n="loading">加载中</div></div>
+    <div class="qc"><div class="qc-lbl" data-i18n="fg_idx">恐惧贪婪指数</div><div class="qc-val" id="q-fg">--</div><div class="qc-sub neu" id="q-fg-c" data-i18n="loading">加载中</div></div>
+    <div class="qc"><div class="qc-lbl" data-i18n="total_mcap">加密总市值</div><div class="qc-val" id="q-mcap">--</div><div class="qc-sub neu" id="q-mcap-c" data-i18n="loading">加载中</div></div>
+    <div class="qc"><div class="qc-lbl" data-i18n="btc_dom">BTC 主导率</div><div class="qc-val" id="q-dom">--</div><div class="qc-sub neu" data-i18n="btc_dom_sub">Bitcoin Dominance</div></div>
+  </div>
+
+  <!-- BTC CYCLE -->
+  <div class="sec"><span data-i18n="sec_btc">📊 BTC 周期指标</span></div>
+  <div class="ig" id="btc-grid"></div>
+
+  <!-- MACRO -->
+  <div class="sec"><span data-i18n="sec_macro">🌍 宏观流动性</span></div>
+  <div class="ig" id="macro-grid"></div>
+
+  <!-- ON-CHAIN -->
+  <div class="sec"><span data-i18n="sec_chain">⛓ 链上数据</span></div>
+  <div class="ig" id="chain-grid"></div>
+
+  <!-- MAG 7 -->
+  <div class="sec"><span data-i18n="sec_mag7">📈 美股七姐妹</span></div>
+  <div class="m7" id="mag7"></div>
+
+  <!-- SIGNALS -->
+  <div class="sec"><span data-i18n="sec_feed">🔔 拐点信号流</span></div>
+  <div class="feed" id="feed"></div>
+
+</main>
+
+<footer>
+  <div style="text-align:center; font-size:12px; color:var(--t3); padding: 4px 0;">
+    © 2026 BTB.PUB . All rights reserved.
+  </div>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let LANG  = 'zh';
+let THEME = 'light';
+const REFRESH_MS = 5 * 60 * 1000;
+
+// ═══════════════════════════════════════════════
+// TRANSLATIONS
+// ═══════════════════════════════════════════════
+const I18N = {
+  zh: {
+    slogan:'发现市场拐点', live:'实时', refresh:'↺ 刷新',
+    assessment:'综合拐点评估', ind_count:'综合 12 项指标',
+    loading:'加载中', tag_loading:'正在获取市场数据…',
+    score_lbl:'拐点风险评分', score_hint:'0 = 历史底部 · 100 = 极度高估',
+    zone_buy_r:'买入区 <40', zone_hold_r:'持有区 40–65', zone_risk_r:'风险区 >65',
+    p_btc:'BTC', p_fg:'恐惧贪婪', p_mcap:'总市值', p_dom:'BTC主导',
+    sec_live:'📡 实时行情', sec_btc:'📊 BTC 周期指标',
+    sec_macro:'🌍 宏观流动性', sec_chain:'⛓ 链上数据',
+    sec_mag7:'📈 美股七姐妹', sec_feed:'🔔 拐点信号流',
+    btc_price:'Bitcoin 价格', fg_idx:'恐惧贪婪指数',
+    total_mcap:'加密总市值', btc_dom:'BTC 主导率', btc_dom_sub:'Bitcoin Dominance',
+    badge_BUY:'低估·买入', badge_HOLD:'中性·持有', badge_RISK:'高估·风险',
+    zone_BUY:'买入区', zone_HOLD:'持有区', zone_RISK:'风险区',
+    stk_live:'✓ 实时', stk_static:'● 参考值',
+    stk_pe:'市盈率', stk_fpe:'前瞻PE', stk_hist_avg:'历史均值',
+    stk_BUY:'低估·关注', stk_HOLD:'合理·持有', stk_RISK:'高估·谨慎',
+    data_src:'数据: Binance · CoinGecko · alternative.me · FRED',
+    disclaimer:'本站仅供参考，不构成投资建议<br>投资有风险，决策需谨慎',
+    updating:'更新中…', updated:'更新 ',
+    api_fail:'部分数据源连接超时，显示为最近缓存值。',
+    tag_bear_deep:'📉 熊市底部区 · 历史级布局机会',
+    tag_bear:'📉 熊市回调 · 关注底部拐点',
+    tag_low:'📍 低估区 · 牛市早期',
+    tag_mid:'📊 合理区 · 上涨延续中',
+    tag_high:'⚠️ 高估区 · 顶部拐点警戒',
+    tag_top:'🔴 极度高估 · 历史顶部拐点',
+    tagline_BUY:'多项指标偏向低估，可能处于周期底部拐点，关注买入信号',
+    tagline_HOLD:'综合指标处于中性，市场延续阶段，持续监测拐点信号',
+    tagline_RISK:'指标进入高估区间，警惕顶部拐点，注意仓位管理',
+    bull_tag:'利好', bear_tag:'利空', neu_tag:'关注',
+    shortcuts:'快捷键: R 刷新 · T 主题 · L 语言',
+    ago_just:'刚刚', ago_s:'秒前', ago_m:'分钟前', ago_h:'小时前', ago_d:'天前',
+  },
+  en: {
+    slogan:'Discover Market Inflection Points', live:'Live', refresh:'↺ Refresh',
+    assessment:'Market Assessment', ind_count:'12 Indicators Combined',
+    loading:'Loading', tag_loading:'Fetching market data…',
+    score_lbl:'Inflection Risk Score', score_hint:'0 = Historic Bottom · 100 = Extreme Overvalued',
+    zone_buy_r:'Buy Zone <40', zone_hold_r:'Hold Zone 40–65', zone_risk_r:'Risk Zone >65',
+    p_btc:'BTC', p_fg:'Fear & Greed', p_mcap:'Market Cap', p_dom:'BTC Dom',
+    sec_live:'📡 Live Markets', sec_btc:'📊 BTC Cycle',
+    sec_macro:'🌍 Macro Liquidity', sec_chain:'⛓ On-Chain',
+    sec_mag7:'📈 Magnificent 7', sec_feed:'🔔 Inflection Signals',
+    btc_price:'Bitcoin Price', fg_idx:'Fear & Greed Index',
+    total_mcap:'Crypto Market Cap', btc_dom:'BTC Dominance', btc_dom_sub:'Bitcoin Dominance',
+    badge_BUY:'Undervalued', badge_HOLD:'Neutral', badge_RISK:'Overvalued',
+    zone_BUY:'BUY ZONE', zone_HOLD:'HOLD ZONE', zone_RISK:'RISK ZONE',
+    stk_live:'✓ Live', stk_static:'● Cached',
+    stk_pe:'P/E', stk_fpe:'Fwd P/E', stk_hist_avg:'Hist. Avg',
+    stk_BUY:'Undervalued', stk_HOLD:'Fair Value', stk_RISK:'Overvalued',
+    data_src:'Data: Binance · CoinGecko · alternative.me · FRED',
+    disclaimer:'For reference only. Not investment advice.',
+    updating:'Updating…', updated:'Updated ',
+    api_fail:'Some data sources timed out. Showing cached values.',
+    tag_bear_deep:'📉 Bear Bottom · Historic Entry',
+    tag_bear:'📉 Bear Market · Watch for Bottom',
+    tag_low:'📍 Undervalued · Early Bull',
+    tag_mid:'📊 Fair Value · Bull Continuation',
+    tag_high:'⚠️ Overvalued · Watch for Top',
+    tag_top:'🔴 Extreme Overvalued · Top Alert',
+    tagline_BUY:'Multiple indicators undervalued — possible cycle bottom inflection point',
+    tagline_HOLD:'Mixed signals — market in continuation, monitoring for inflection',
+    tagline_RISK:'Elevated risk indicators — watch for top inflection signals',
+    bull_tag:'Bullish', bear_tag:'Bearish', neu_tag:'Watch',
+    shortcuts:'Shortcuts: R Refresh · T Theme · L Language',
+    ago_just:'just now', ago_s:'s ago', ago_m:'m ago', ago_h:'h ago', ago_d:'d ago',
+  }
+};
+function t(k) { return I18N[LANG][k] ?? I18N['zh'][k] ?? k; }
+
+// ═══════════════════════════════════════════════
+// INDICATOR TRANSLATIONS (zh/en)
+// ═══════════════════════════════════════════════
+const IND_NAMES = {
+  ahr999:   { zh:'AHR999 指数',      en:'AHR999 Index'     },
+  mvrv:     { zh:'MVRV 比率',        en:'MVRV Ratio'       },
+  ma200w:   { zh:'200周均线溢价',     en:'200W MA Premium'  },
+  rainbow:  { zh:'彩虹图位置',        en:'Rainbow Band'     },
+  fed:      { zh:'美联储基准利率',    en:'Fed Funds Rate'   },
+  m2:       { zh:'M2 货币增速',       en:'M2 Growth'        },
+  dxy:      { zh:'美元指数 DXY',      en:'USD Index DXY'    },
+  yield10y: { zh:'美债10年收益率',    en:'US 10Y Yield'     },
+  sc_flow:  { zh:'稳定币净流入',      en:'Stablecoin Inflow'},
+  ex_flow:  { zh:'交易所BTC净流量',   en:'Exchange Netflow' },
+  active:   { zh:'链上活跃地址',      en:'Active Addresses' },
+  nupl:     { zh:'NUPL 净未实现利润', en:'NUPL'             },
+};
+function iname(id) { return IND_NAMES[id]?.[LANG] ?? id; }
+
+// ═══════════════════════════════════════════════
+// STATIC CONFIG (update manually)
+// ═══════════════════════════════════════════════
+const MACRO = {
+  fed:  { v:4.25, date:'2026-04' },   // 美联储未降息，维持4.25-4.50%
+  m2:   { v:3.8,  date:'2026-03' },   // FRED M2 同比增速小幅回落
+  dxy:  { v:102.3,date:'2026-04' },   // 关税冲击致美元走弱
+  y10:  { v:4.05, date:'2026-04' },   // 衰退预期推低美债收益率
+};
+const CHAIN = {
+  sc:  { v:0.6,    lbl:'+$0.6B/30D'   },  // 关税恐慌期稳定币流入放缓
+  ex:  { v:-18000, lbl:'-18K BTC/7D'  },  // 持币者未恐慌出货，仍净流出
+  act: { v:770000, lbl:'77万/Day'     },  // 链上活跃度随价格下跌略降
+  npl: { v:0.38,   lbl:'0.38'         },  // 价格从$88K跌至$75K，NUPL回落
+};
+const MAG7 = [
+  { t:'NVDA',  n:'NVIDIA',    pe:32,  fpe:25, h:50,  s:'HOLD', c:'var(--accent)' },  // 关税跌后估值改善
+  { t:'MSFT',  n:'Microsoft', pe:30,  fpe:25, h:30,  s:'HOLD', c:'var(--accent)' },
+  { t:'AAPL',  n:'Apple',     pe:28,  fpe:24, h:25,  s:'RISK', c:'var(--risk)'   },  // 对华供应链风险上升
+  { t:'META',  n:'Meta',      pe:20,  fpe:17, h:22,  s:'BUY',  c:'var(--buy)'    },
+  { t:'GOOGL', n:'Alphabet',  pe:18,  fpe:15, h:24,  s:'BUY',  c:'var(--buy)'    },
+  { t:'AMZN',  n:'Amazon',    pe:30,  fpe:24, h:80,  s:'HOLD', c:'var(--accent)' },
+  { t:'TSLA',  n:'Tesla',     pe:120, fpe:55, h:100, s:'RISK', c:'var(--risk)'   },  // 马斯克政治风险+关税压制
+];
+
+// ═══════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════
+const $  = id => document.getElementById(id);
+const cl = (v,lo,hi) => Math.min(Math.max(v,lo),hi);
+function usd(n) {
+  if (n>=1e12) return '$'+(n/1e12).toFixed(2)+'T';
+  if (n>=1e9)  return '$'+(n/1e9).toFixed(2)+'B';
+  if (n>=1e6)  return '$'+(n/1e6).toFixed(2)+'M';
+  if (n>=1000) return '$'+n.toLocaleString('en-US',{maximumFractionDigits:0});
+  return '$'+n.toFixed(2);
+}
+function pct(n,d=2) { return (n>=0?'+':'')+n.toFixed(d)+'%'; }
+function fts(d) { return d.toLocaleString(LANG==='zh'?'zh-CN':'en-US',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}); }
+
+// ═══════════ CACHED FETCH ═══════════
+const CACHE_VERSION = 'v2';
+
+function isUsableData(key, data) {
+  if (data == null) return false;
+  if (key === 'cg-hist') return Array.isArray(data) && data.length >= 200;
+  if (key === 'cg-global') return !!data?.total_market_cap?.usd;
+  if (key === 'binance') return Number.isFinite(data?.price);
+  if (key === 'fg') return data?.value != null;
+  if (key === 'bg-onchain') return data?.mvrv != null || data?.nupl != null;
+  if (key === 'stk-batch') return typeof data === 'object' && data !== null && Object.keys(data).length > 0;
+  return true;
+}
+
+async function cachedFetch(key, fetcher, ttlMs) {
+  const cacheKey = 'btb-cache-' + CACHE_VERSION + '-' + key;
+  try {
+    const raw = localStorage.getItem(cacheKey);
+    if (raw) {
+      const {ts, data} = JSON.parse(raw);
+      if (Date.now() - ts < ttlMs && isUsableData(key, data)) return {data, stale: false};
+    }
+  } catch {}
+  try {
+    const data = await fetcher();
+    if (!isUsableData(key, data)) throw new Error('invalid data');
+    try { localStorage.setItem(cacheKey, JSON.stringify({ts: Date.now(), data})); } catch {}
+    return {data, stale: false};
+  } catch (e) {
+    try {
+      const raw = localStorage.getItem(cacheKey);
+      if (raw) {
+        const {data} = JSON.parse(raw);
+        if (isUsableData(key, data)) return {data, stale: true};
+      }
+    } catch {}
+    throw e;
+  }
+}
+
+// ═══════════ COUNT UP ANIMATION ═══════════
+function countUp(el, target, duration=1200) {
+  const start = parseFloat(el.textContent.replace(/[^0-9.\-]/g,'')) || 0;
+  if (isNaN(target) || start === target) { el.textContent = target; return; }
+  const startTime = performance.now();
+  const isInt = Number.isInteger(target);
+  function tick(now) {
+    const p = Math.min((now - startTime) / duration, 1);
+    const ease = 1 - Math.pow(1 - p, 3); // ease-out cubic
+    const v = start + (target - start) * ease;
+    el.textContent = isInt ? Math.round(v) : v.toFixed(target < 10 ? 2 : 0);
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+// ═══════════ RELATIVE TIME ═══════════
+let lastRefreshAt = 0;
+function relTime(ms) {
+  const s = Math.floor(ms / 1000);
+  if (s < 5)    return t('ago_just');
+  if (s < 60)   return s + t('ago_s');
+  if (s < 3600) return Math.floor(s/60) + t('ago_m');
+  if (s < 86400)return Math.floor(s/3600) + t('ago_h');
+  return Math.floor(s/86400) + t('ago_d');
+}
+
+// ═══════════ SKELETON RENDERER ═══════════
+function renderSkeletons(gridId, count) {
+  const el = $(gridId);
+  if (!el) return;
+  el.innerHTML = Array.from({length: count}, () => `
+    <div class="skel-card">
+      <div class="skel-line w60 skeleton"></div>
+      <div class="skel-line h28 skeleton"></div>
+      <div class="skel-bar skeleton"></div>
+      <div class="skel-line w80 skeleton"></div>
+    </div>
+  `).join('');
+}
+
+// ═══════════ SCORE HISTORY ═══════════
+function saveScoreHistory(score) {
+  const key = 'btb-score-history';
+  let hist = [];
+  try { hist = JSON.parse(localStorage.getItem(key)) || []; } catch {}
+  hist.push({ts: Date.now(), score});
+  if (hist.length > 288) hist = hist.slice(-288);
+  try { localStorage.setItem(key, JSON.stringify(hist)); } catch {}
+  return hist;
+}
+function getScoreHistory() {
+  try { return JSON.parse(localStorage.getItem('btb-score-history')) || []; } catch { return []; }
+}
+
+// ═══════════ SPARKLINE CHART ═══════════
+function drawScoreSparkline(canvasId, data) {
+  const canvas = $(canvasId);
+  if (!canvas || data.length < 2) { if (canvas) canvas.style.display = 'none'; return; }
+  canvas.style.display = 'block';
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const W = rect.width, H = rect.height;
+  const pad = 4;
+
+  const scores = data.map(d => d.score);
+  const minS = Math.max(0, Math.min(...scores) - 5);
+  const maxS = Math.min(100, Math.max(...scores) + 5);
+  const range = maxS - minS || 1;
+
+  const pts = data.map((d, i) => ({
+    x: pad + (i / (data.length - 1)) * (W - 2 * pad),
+    y: pad + (1 - (d.score - minS) / range) * (H - 2 * pad),
+    score: d.score,
+  }));
+
+  // gradient line
+  const grad = ctx.createLinearGradient(0, 0, W, 0);
+  grad.addColorStop(0, '#00d68f');
+  grad.addColorStop(0.5, '#f5a623');
+  grad.addColorStop(1, '#ff4d6a');
+
+  // fill
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  pts.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.lineTo(pts[pts.length-1].x, H);
+  ctx.lineTo(pts[0].x, H);
+  ctx.closePath();
+  const fillGrad = ctx.createLinearGradient(0, 0, 0, H);
+  fillGrad.addColorStop(0, 'rgba(79,142,247,.12)');
+  fillGrad.addColorStop(1, 'rgba(79,142,247,0)');
+  ctx.fillStyle = fillGrad;
+  ctx.fill();
+
+  // line
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  pts.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  // dot at end
+  const last = pts[pts.length - 1];
+  const dotColor = last.score < 40 ? '#00d68f' : last.score < 65 ? '#f5a623' : '#ff4d6a';
+  ctx.beginPath();
+  ctx.arc(last.x, last.y, 3.5, 0, Math.PI * 2);
+  ctx.fillStyle = dotColor;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,.8)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+}
+
+// ═══════════════════════════════════════════════
+// CALCULATIONS
+// 注意：days=max 返回的历史数据中，近期为日线，远期为周线
+// 因此所有均值计算都使用时间窗口而非固定点数
+// ═══════════════════════════════════════════════
+
+// 获取指定天数内的历史数据
+function getHistWindow(hist, days) {
+  const cutoff = Date.now() - days * 86400000;
+  return hist.filter(p => p[0] >= cutoff);
+}
+
+// 将历史数据重采样为每日一个点（取每天最后一个值）
+// CoinGecko days=max 近90天返回小时级数据，不重采样会严重偏向近期
+function resampleDaily(hist) {
+  const byDay = {};
+  for (const p of hist) {
+    const dayKey = Math.floor(p[0] / 86400000);
+    byDay[dayKey] = p; // 同一天后面的覆盖前面的
+  }
+  return Object.values(byDay).sort((a, b) => a[0] - b[0]);
+}
+
+function calcAHR999(price, hist) {
+  // AHR999 = (Price / 200日定投成本) × (Price / 指数增长估值)
+  // 200日定投成本按原始口径使用近200天价格的几何均值（geometric mean）
+  // 指数增长估值 = 对数回归模型价格
+  // 参考: ahr999 原始定义 (九神《囤比特币》)、CoinGlass
+  const daily = resampleDaily(getHistWindow(hist, 200));
+  if (daily.length < 20) return null;
+
+  const logSum = daily.reduce((sum, p) => sum + Math.log(p[1]), 0);
+  const geoMean200 = Math.exp(logSum / daily.length);
+
+  const latestTs = hist?.length ? hist[hist.length - 1][0] : Date.now();
+  const days = (latestTs - new Date('2009-01-03')) / 86400000;
+  if (days <= 0) return null;
+  const modelPrice = Math.pow(10, 5.84 * Math.log10(days) - 17.01);
+
+  return (price / geoMean200) * (price / modelPrice);
+}
+
+function calcMVRV(price, hist) {
+  // MVRV ≈ Market Value / Realized Value
+  // 真实 MVRV 需要链上 UTXO 数据（Glassnode/CryptoQuant）
+  // 此处使用完整历史的指数加权均价作为已实现价格的近似
+  if (!hist || hist.length < 100) return null;
+  const n = hist.length;
+  const spanDays = (hist[n-1][0] - hist[0][0]) / 86400000;
+  // 半衰期 ≈ 总跨度的 40%，模拟 UTXO 年龄分布
+  const halfLife = Math.max(365, spanDays * 0.4);
+  const lambda = Math.pow(0.5, 1 / halfLife);
+  let wSum = 0, wTotal = 0;
+  for (let i = 0; i < n; i++) {
+    const daysFromEnd = (hist[n-1][0] - hist[i][0]) / 86400000;
+    const w = Math.pow(lambda, daysFromEnd);
+    wSum += hist[i][1] * w;
+    wTotal += w;
+  }
+  const realizedProxy = wSum / wTotal;
+  return price / realizedProxy;
+}
+
+function calcMA200W(price, hist) {
+  // 200周均线 ≈ 1400天均价
+  const recent = getHistWindow(hist, 1400);
+  if (recent.length < 20) return null;
+  const ma = recent.reduce((a, p) => a + p[1], 0) / recent.length;
+  return price / ma;
+}
+
+function calcRainbow(price) {
+  const days = (Date.now() - new Date('2009-01-03')) / 86400000;
+  const base = Math.pow(10, 5.84 * Math.log10(days) - 17.01);
+  const mults = [0.35, 0.55, 0.80, 1.1, 1.5, 2.1, 2.9, 4.2, 6.5];
+  const bands = mults.map(m => base * m);
+  let idx = bands.length - 1;
+  for (let i = 0; i < bands.length; i++) { if (price < bands[i]) { idx = i; break; } }
+  return Math.round((idx / (bands.length - 1)) * 100);
+}
+
+function getMA200(hist) {
+  // 200日均线
+  const recent = getHistWindow(hist, 200);
+  if (recent.length < 10) return null;
+  return recent.reduce((a, p) => a + p[1], 0) / recent.length;
+}
+
+// ═══════════════════════════════════════════════
+// CYCLE PHASE — smarter detection
+// ═══════════════════════════════════════════════
+function cyclePhase(score, price, hist, mvrv_v, ahr_v) {
+  const ma200 = getMA200(hist);
+  const belowMA = ma200 && price < ma200;
+
+  // Bear market signals: below 200DMA or very low MVRV
+  if (mvrv_v !== null && mvrv_v < 1.0) return t('tag_bear_deep');
+  if (belowMA && score > 45)           return t('tag_bear');
+  if (ahr_v !== null && ahr_v < 0.3)   return t('tag_bear_deep');
+
+  if (score < 30)  return t('tag_bear_deep');
+  if (score < 42)  return t('tag_low');
+  if (score < 58)  return t('tag_mid');
+  if (score < 70)  return t('tag_high');
+  return t('tag_top');
+}
+
+// ═══════════════════════════════════════════════
+// INDICATOR BUILDERS
+// ═══════════════════════════════════════════════
+function buildBTC(price, hist, liveMVRV) {
+  const a  = calcAHR999(price, hist);
+  // 优先使用链上真实 MVRV，fallback 到本地近似
+  const mv = liveMVRV ?? calcMVRV(price, hist);
+  const w  = calcMA200W(price, hist);
+  const rb = calcRainbow(price);
+  const ma = getMA200(hist);
+
+  const ahr = a ?? 0.5;
+  const mvrv = mv ?? 1.2;
+  const ma200w = w ?? 1.2;
+
+  // AHR999 标准阈值: <0.45 抄底, 0.45-1.2 定投, >1.2 牛市高位
+  const ahrStatus  = ahr<0.45?'BUY': ahr<1.2?'HOLD':'RISK';
+  // MVRV 标准阈值: <1 低估, 1-3.7 正常, >3.7 极度高估
+  const mvrvStatus = mvrv<1?'BUY': mvrv<3.7?'HOLD':'RISK';
+  const maStatus   = ma200w<2.0?'BUY': ma200w<5.0?'HOLD':'RISK';
+  const rbStatus   = rb<35?'BUY': rb<65?'HOLD':'RISK';
+
+  const belowMA = ma && price < ma;
+
+  return [
+    {
+      id:'ahr999', s:ahrStatus, val:ahr.toFixed(3),
+      g: cl(ahr/4*100,0,100), zl:'<0.45 抄底区', zr:'>1.2 牛市',
+      desc: LANG==='en'
+        ? (ahr<0.45?'Extreme undervaluation — historic bottom buy signal':
+           ahr<0.8 ?'Below fair value — good DCA zone':
+           ahr<1.2 ?'Moderate valuation — suitable for regular investment':
+           ahr<4.0 ?'Bull market — price above model, reduce exposure':
+                    'Extreme overvaluation — cycle top signal')
+        : (ahr<0.45?'极度低估，历史级抄底信号，类似FTX暴跌后的底部':
+           ahr<0.8 ?'低于公允价值，适合定投建仓':
+           ahr<1.2 ?'估值适中，适合定期定额投资':
+           ahr<4.0 ?'牛市区间，价格高于模型估值，注意仓位':
+                    '极度高估，周期顶部信号'),
+      src: 'CoinGecko · ' + (a?'实时计算':'默认参考值'),
+    },
+    {
+      id:'mvrv', s:mvrvStatus, val:mvrv.toFixed(2),
+      g: cl(mvrv/5*100,0,100), zl:'< 1 极低估', zr:'> 3.7 极高估',
+      desc: LANG==='en'
+        ? (mvrv<1.0?'Market at a loss — historic bottom area':
+           mvrv<1.5?'Near cost basis — low risk accumulation':
+           mvrv<2.4?'Fair value range — healthy uptrend':
+           mvrv<3.7?'Market profitable — watch for top':
+                    'Extreme overvaluation — historic top')
+        : (mvrv<1.0?'市场整体亏损，历史级底部拐点':
+           mvrv<1.5?'贴近成本线，持仓风险低，积累区':
+           mvrv<2.4?'公允价值区间，趋势健康':
+           mvrv<3.7?'市场盈利丰厚，关注顶部拐点':
+                    '极度高估，历史对应牛顶拐点'),
+      src: liveMVRV ? 'BGeometrics · 链上数据' : (mv ? 'CoinGecko · 近似' : '默认参考值'),
+    },
+    {
+      id:'ma200w', s:maStatus, val:ma200w.toFixed(2)+'x',
+      g: cl(ma200w/8*100,0,100), zl:'< 1x 底部', zr:'> 5x 泡沫',
+      desc: LANG==='en'
+        ? (belowMA?'Price BELOW 200-day MA — bear market territory, historic buy':
+           ma200w<2.0?'Near 200W MA — strong long-term support, bottom area':
+           ma200w<4.0?'Above MA in healthy range':
+                      'Far above MA — overextended, watch for pullback')
+        : (belowMA?'价格跌破200日均线 — 熊市区域，历史买入拐点':
+           ma200w<2.0?'紧贴200周均线，长期底部支撑，拐点向上概率高':
+           ma200w<4.0?'均线上方合理区间，趋势健康':
+                      '大幅偏离均线，超买风险，关注回调拐点'),
+      src: 'CoinGecko · ' + (w?'实时计算':'默认值'),
+    },
+    {
+      id:'rainbow', s:rbStatus, val:'Band '+(Math.ceil(cl(rb,1,100)/12)),
+      g: rb, zl:'买入带', zr:'最大泡沫',
+      desc: LANG==='en'
+        ? (rb<25?'Deep blue — historic buy zone':
+           rb<45?'Blue/green — accumulation phase':
+           rb<65?'Yellow — fair value, observe':
+           rb<80?'Orange/red — overvalued, consider taking profits':
+                 'Red — max bubble, historic top inflection')
+        : (rb<25?'深蓝区：历史极度低估，最强买入拐点':
+           rb<45?'蓝绿区：低估积累阶段，趋势向上':
+           rb<65?'黄色区：公允价值，观望拐点确认':
+           rb<80?'橙红区：高估，可考虑减仓':
+                 '红色区：最大泡沫，历史顶部拐点'),
+      src: '对数回归模型',
+    },
+  ];
+}
+
+function buildMacro() {
+  const {fed,m2,dxy,y10} = MACRO;
+  const cards = [
+    { id:'fed', v:fed.v, date:fed.date,
+      val: fed.v.toFixed(2)+'%',
+      s: fed.v<2?'BUY': fed.v<4?'HOLD':'RISK',
+      g: cl(fed.v/6*100,0,100), zl:'0% 宽松', zr:'5%+ 紧缩',
+      desc_zh: fed.v<2?'零利率，流动性极度充裕，资产价格拐点向上':
+               fed.v<3.5?'温和利率，流动性适中':
+               fed.v<4.5?'高利率抑制流动性，风险资产承压':
+                          '历史高位利率，系统性风险上升',
+      desc_en: fed.v<2?'Near-zero rates — extreme liquidity, bullish for risk assets':
+               fed.v<3.5?'Moderate rates — neutral liquidity':
+               fed.v<4.5?'High rates suppress liquidity — risk assets pressured':
+                          'Historic high rates — systemic risk elevated',
+      src:'Federal Reserve · '+fed.date },
+    { id:'m2', v:m2.v, date:m2.date,
+      val: '+'+m2.v.toFixed(1)+'%',
+      s: m2.v<0?'RISK': m2.v<5?'HOLD':'BUY',
+      g: cl(m2.v/12*100,0,100), zl:'< 0% 收缩', zr:'> 12% 扩张',
+      desc_zh: m2.v<0?'M2负增长，全球流动性收缩，熊市信号':
+               m2.v<3?'M2低增速，流动性偏紧':
+               m2.v<7?'M2温和扩张，流动性环境改善':
+                       'M2快速扩张，充裕流动性利好拐点向上',
+      desc_en: m2.v<0?'Negative M2 growth — global liquidity contraction, bearish':
+               m2.v<3?'Slow M2 growth — tight liquidity':
+               m2.v<7?'Moderate M2 expansion — improving conditions':
+                       'Rapid M2 expansion — abundant liquidity, bullish inflection',
+      src:'FRED M2SL · '+m2.date },
+    { id:'dxy', v:dxy.v, date:dxy.date,
+      val: dxy.v.toFixed(1),
+      s: dxy.v<97?'BUY': dxy.v<104?'HOLD':'RISK',
+      g: cl((dxy.v-90)/25*100,0,100), zl:'弱美元利好', zr:'强美元压制',
+      desc_zh: dxy.v<97?'弱美元周期，非美资产上涨拐点到来':
+               dxy.v<104?'美元中性，对加密影响有限':
+                          '强美元压制，等待美元回落拐点',
+      desc_en: dxy.v<97?'Weak USD — bullish for non-USD assets including crypto':
+               dxy.v<104?'Neutral USD — limited impact on crypto':
+                          'Strong USD — suppresses non-USD assets',
+      src:'TradingView · '+dxy.date },
+    { id:'yield10y', v:y10.v, date:y10.date,
+      val: y10.v.toFixed(2)+'%',
+      s: y10.v<2.5?'BUY': y10.v<4.2?'HOLD':'RISK',
+      g: cl(y10.v/6*100,0,100), zl:'低利率友好', zr:'高利率压估值',
+      desc_zh: y10.v<2.5?'超低无风险利率，资金涌入风险资产':
+               y10.v<4.0?'利率适中，对估值影响可控':
+                          '10Y高位，无风险利率竞争，压制估值',
+      desc_en: y10.v<2.5?'Ultra-low risk-free rate — funds flow into risk assets':
+               y10.v<4.0?'Moderate yield — manageable valuation impact':
+                          'High 10Y yield — risk-free rate competes with assets',
+      src:'US Treasury · '+y10.date },
+  ];
+  return cards.map(c=>({ ...c, desc: LANG==='en'?c.desc_en:c.desc_zh }));
+}
+
+function buildChain(liveNUPL) {
+  const {sc,ex,act,npl} = CHAIN;
+  // 优先使用链上真实 NUPL
+  const nplVal = liveNUPL ?? npl.v;
+  const nplLbl = liveNUPL ? liveNUPL.toFixed(2) : npl.lbl;
+  return [
+    { id:'sc_flow',
+      s: sc.v>1?'BUY': sc.v>0?'HOLD':'RISK',
+      val: sc.lbl, g: cl((sc.v+2)/5*100,0,100),
+      zl:'流出(空头)', zr:'流入(入场)',
+      desc: LANG==='en'
+        ? (sc.v>1.5?'Strong stablecoin inflows — capital entering market, bullish signal':
+           sc.v>0  ?'Mild stablecoin inflow — sentiment improving':
+                    'Stablecoin outflows — sideline capital waiting')
+        : (sc.v>1.5?'大量稳定币入场，资金拐点信号强烈，利好':
+           sc.v>0  ?'稳定币小幅流入，情绪改善中':
+                    '稳定币流出，场外观望'),
+      src:'CryptoQuant · 接入Key后实时' },
+    { id:'ex_flow',
+      s: ex.v<-20000?'BUY': ex.v<20000?'HOLD':'RISK',
+      val: (ex.v>0?'+':'')+Math.round(ex.v/1000)+'K BTC',
+      g: cl((ex.v+100000)/200000*100,0,100),
+      zl:'净流出(惜售)', zr:'净流入(抛压)',
+      desc: LANG==='en'
+        ? (ex.v<-30000?'BTC leaving exchanges — holders refusing to sell, bullish supply shock':
+           ex.v<0      ?'Mild outflow — moderate sell pressure':
+           ex.v<30000  ?'Neutral flow':
+                        'Heavy BTC inflows to exchanges — sell pressure warning')
+        : (ex.v<-30000?'BTC大量流出交易所，持币者惜售，供应侧拐点，利好':
+           ex.v<0      ?'小幅净流出，抛压温和':
+           ex.v<30000  ?'流量中性':
+                        '大量BTC流入，抛压拐点警告'),
+      src:'Glassnode · 接入Key后实时' },
+    { id:'active',
+      s: act.v>900000?'BUY': act.v>600000?'HOLD':'RISK',
+      val: act.lbl, g: cl(act.v/1200000*100,0,100),
+      zl:'低活跃', zr:'高活跃',
+      desc: LANG==='en'
+        ? (act.v>1000000?'Active addresses above cycle average — strong network demand':
+           act.v>700000 ?'Normal activity — healthy trend':
+                         'Low on-chain activity — bear market signal')
+        : (act.v>1000000?'活跃地址突破周期均值，网络需求旺盛，上行拐点':
+           act.v>700000 ?'活跃度正常，趋势健康':
+                         '链上活跃度偏低，熊市信号，关注底部拐点'),
+      src:'Glassnode · 接入Key后实时' },
+    { id:'nupl',
+      s: nplVal<0.25?'BUY': nplVal<0.65?'HOLD':'RISK',
+      val: nplLbl, g: cl(nplVal*100,0,100),
+      zl:'投降 < 0', zr:'欣喜 > 0.75',
+      desc: LANG==='en'
+        ? (nplVal<0    ?'Full market loss — historic bottom inflection':
+           nplVal<0.25 ?'Low profit — hope phase, early after bottom':
+           nplVal<0.5  ?'Optimism phase — healthy trend':
+           nplVal<0.65 ?'Belief phase — profitable but not topped':
+                        'Euphoria/Greed — historic top inflection area')
+        : (nplVal<0    ?'全市场亏损，历史级底部拐点，最强买入':
+           nplVal<0.25 ?'少量盈利，希望阶段，底部拐点后早期':
+           nplVal<0.5  ?'乐观阶段，趋势良好':
+           nplVal<0.65 ?'信念阶段，盈利丰厚但未见顶':
+                        '欣喜贪婪，历史顶部拐点区域'),
+      src: liveNUPL ? 'BGeometrics · 链上数据' : '参考值 · 接入Key后实时' },
+  ];
+}
+
+// ═══════════════════════════════════════════════
+// SCORE CALCULATOR
+// ═══════════════════════════════════════════════
+const IND_WEIGHTS = {
+  ahr999:15, mvrv:15, ma200w:12, rainbow:8,
+  fed:6, m2:6, dxy:4, yield10y:4,
+  sc_flow:8, ex_flow:8, active:7, nupl:7,
+};
+function calcScore(inds) {
+  const V = { BUY:20, HOLD:50, RISK:80 };
+  let wSum = 0, wTotal = 0;
+  inds.forEach(d => {
+    const w = IND_WEIGHTS[d.id] || 5;
+    wSum += (V[d.s] ?? 50) * w;
+    wTotal += w;
+  });
+  return Math.round(wSum / wTotal);
+}
+
+// ═══════════════════════════════════════════════
+// RENDER INDICATOR CARD
+// ═══════════════════════════════════════════════
+const GCOL = { BUY:'buy', HOLD:'hold', RISK:'risk', NEU:'neu' };
+function renderCard(d) {
+  const col = GCOL[d.s]||'neu';
+  const w   = cl(d.g??50,0,100).toFixed(1);
+  const nm  = d.id ? iname(d.id) : d.name;
+  return `
+  <div class="ic ${d.s}">
+    <div class="ic-top">
+      <div class="ic-name">${nm}</div>
+      <div class="ic-badge ${d.s}">${t('badge_'+d.s)}</div>
+    </div>
+    <div class="ic-val">${d.val}</div>
+    <div>
+      <div class="gauge-track"><div class="gauge-fill ${col}" style="width:${w}%"></div></div>
+      <div class="gauge-zl"><span>${d.zl||''}</span><span>${d.zr||''}</span></div>
+    </div>
+    <div class="ic-desc">${d.desc}<div class="ic-src">${t('data_src').split('·')[0].replace('数据:','').replace('Data:','').trim()}: ${d.src}</div></div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════
+// RENDER MAG 7
+// ═══════════════════════════════════════════════
+function renderMag7(liveMap) {
+  $('mag7').innerHTML = MAG7.map(s => {
+    const lv  = liveMap[s.t];
+    const pr  = lv ? usd(lv.price) : '--';
+    const chg = lv ? pct(lv.change24h) : '';
+    const cc  = lv ? (lv.change24h>=0?'up':'down') : '';
+    const src = lv ? t('stk_live') : t('stk_static');
+    return `
+    <div class="sc">
+      <div class="sc-tick" style="color:${s.c}">${s.t}</div>
+      <div class="sc-name">${s.n}</div>
+      <div class="sc-price">${pr}</div>
+      <div class="sc-chg ${cc}">${chg||'&nbsp;'}</div>
+      <div class="sc-div"></div>
+      <div class="sc-row">${t('stk_pe')} <strong>${s.pe}x</strong></div>
+      <div class="sc-row">${t('stk_fpe')} <strong>${s.fpe}x</strong></div>
+      <div class="sc-hist">${t('stk_hist_avg')} ${s.h}x</div>
+      <div class="sc-badge ${s.s}">${t('stk_'+s.s)}</div>
+      <div class="sc-live" style="color:${lv?'var(--buy)':'var(--t3)'}">${src}</div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// RENDER SIGNAL FEED
+// ═══════════════════════════════════════════════
+function renderFeed(ch24, btcData, fgData, chainLive, history) {
+  const en = LANG === 'en';
+  const sigs = [];
+  const price = btcData?.price ?? null;
+  const fgN = fgData ? parseInt(fgData.value) : null;
+  const nupl = chainLive?.nupl ?? null;
+  const mvrv = chainLive?.mvrv ?? null;
+  const dxy = MACRO.dxy.v, y10 = MACRO.y10.v, fed = MACRO.fed.v, m2g = MACRO.m2.v;
+
+  // 7D / 30D 涨跌（来自历史序列）
+  let ch7 = null, ch30 = null;
+  if (Array.isArray(history) && history.length > 30 && price) {
+    const h = history.map(x => x[1] ?? x);
+    const p7  = h[h.length - 8],  p30 = h[h.length - 31];
+    if (p7)  ch7  = (price - p7)  / p7  * 100;
+    if (p30) ch30 = (price - p30) / p30 * 100;
+  }
+
+  const push = (c, ico, title, desc) => sigs.push({
+    c, ico, cls:c, lbl:t(c+'_tag'), title, desc, time:relTime(0)
+  });
+
+  // === BTC 价格动作 ===
+  if (price) {
+    push('neu', '₿',
+      en ? `BTC Spot: $${Math.round(price).toLocaleString()}` : `BTC 现价 $${Math.round(price).toLocaleString()}`,
+      en ? `24H ${ch24>=0?'+':''}${ch24?.toFixed(2)}%${ch7!=null?` · 7D ${ch7>=0?'+':''}${ch7.toFixed(1)}%`:''}${ch30!=null?` · 30D ${ch30>=0?'+':''}${ch30.toFixed(1)}%`:''}`
+         : `24H ${ch24>=0?'+':''}${ch24?.toFixed(2)}%${ch7!=null?` · 7D ${ch7>=0?'+':''}${ch7.toFixed(1)}%`:''}${ch30!=null?` · 30D ${ch30>=0?'+':''}${ch30.toFixed(1)}%`:''}`
+    );
+  }
+  if (ch24 !== null && ch24 !== undefined) {
+    if (ch24 <= -5)       push('bear','📉', en?`BTC 24H Crash ${Math.abs(ch24).toFixed(1)}%`:`BTC 24H 急跌 ${Math.abs(ch24).toFixed(1)}%`, en?'Leveraged liquidation risk — watch key support for reversal inflection':'杠杆清算风险上升，关注关键支撑能否守住形成反转拐点');
+    else if (ch24 <= -2)  push('bear','🔻', en?`BTC 24H -${Math.abs(ch24).toFixed(2)}%`:`BTC 24H 下跌 ${Math.abs(ch24).toFixed(2)}%`, en?'Bearish session — monitor volume for follow-through':'偏弱走势，观察成交量是否放大确认方向');
+    else if (ch24 >=  5)  push('bull','🚀', en?`BTC 24H Surge +${ch24.toFixed(1)}%`:`BTC 24H 强势上涨 ${ch24.toFixed(1)}%`, en?'Strong breakout momentum — watch overhead resistance':'量价配合，关注能否突破阻力形成新的上行拐点');
+    else if (ch24 >=  2)  push('bull','📈', en?`BTC 24H +${ch24.toFixed(2)}%`:`BTC 24H 上涨 ${ch24.toFixed(2)}%`, en?'Constructive move — trend holding':'走势健康，趋势结构完好');
+    else                  push('neu','➡️', en?`BTC 24H ${ch24>=0?'+':''}${ch24.toFixed(2)}%`:`BTC 24H ${ch24>=0?'+':''}${ch24.toFixed(2)}%`, en?'Consolidation — low volatility range':'低波动盘整，等待方向选择');
+  }
+  if (ch7 != null && Math.abs(ch7) >= 8) {
+    push(ch7>0?'bull':'bear', ch7>0?'📊':'📊',
+      en?`BTC 7D ${ch7>=0?'+':''}${ch7.toFixed(1)}%`:`BTC 周线 ${ch7>=0?'+':''}${ch7.toFixed(1)}%`,
+      en?'Weekly trend shift — potential inflection':'周线趋势发生显著变化，可能是拐点信号');
+  }
+
+  // === 恐惧贪婪 ===
+  if (fgN != null) {
+    if (fgN < 25)      push('bull','😱', en?`Fear & Greed ${fgN} — Extreme Fear`:`恐惧贪婪 ${fgN} · 极度恐惧`, en?'Historically a high-odds accumulation zone':'历史上极度恐惧区往往是高胜率建仓区');
+    else if (fgN < 40) push('bull','😟', en?`Fear & Greed ${fgN} — Fear`:`恐惧贪婪 ${fgN} · 恐惧`, en?'Sentiment cooling — watch for reversal signals':'情绪偏冷，关注反转信号出现');
+    else if (fgN > 80) push('bear','🤑', en?`Fear & Greed ${fgN} — Extreme Greed`:`恐惧贪婪 ${fgN} · 极度贪婪`, en?'Top-risk zone — consider trimming exposure':'历史顶部风险区，建议降低仓位');
+    else if (fgN > 65) push('bear','😎', en?`Fear & Greed ${fgN} — Greed`:`恐惧贪婪 ${fgN} · 贪婪`, en?'Sentiment hot — stay disciplined':'情绪偏热，保持纪律，不追高');
+    else               push('neu','😐', en?`Fear & Greed ${fgN} — Neutral`:`恐惧贪婪 ${fgN} · 中性`, en?'Balanced sentiment':'情绪中性，等待方向');
+  }
+
+  // === NUPL ===
+  if (nupl != null) {
+    const nv = nupl.toFixed(2);
+    if (nupl < 0)        push('bull','💎', en?`NUPL ${nv} — Capitulation`:`NUPL ${nv} · 投降`, en?'Market-wide unrealized loss — historic bottom inflection':'全市场未实现亏损，历史级底部拐点');
+    else if (nupl < 0.25)push('bull','🌱', en?`NUPL ${nv} — Hope`:`NUPL ${nv} · 希望阶段`, en?'Early recovery after bottom — accumulation phase':'底部后早期修复阶段，适合积累');
+    else if (nupl < 0.5) push('neu','🌿', en?`NUPL ${nv} — Optimism`:`NUPL ${nv} · 乐观`, en?'Healthy uptrend — profits moderate':'趋势健康，盈利温和');
+    else if (nupl < 0.65)push('neu','🌳', en?`NUPL ${nv} — Belief`:`NUPL ${nv} · 信念`, en?'Profits rising — not yet topped':'盈利丰厚但未见顶部');
+    else                 push('bear','🔥', en?`NUPL ${nv} — Euphoria`:`NUPL ${nv} · 欣喜贪婪`, en?'Historic top zone — high risk':'历史顶部拐点区域，风险极高');
+  }
+
+  // === MVRV ===
+  if (mvrv != null) {
+    const mv = mvrv.toFixed(2);
+    if (mvrv < 1)       push('bull','🎯', en?`MVRV ${mv} — Undervalued`:`MVRV ${mv} · 低估`, en?'Below realized price — historical buy zone':'跌破实现价，历史级买入区');
+    else if (mvrv < 2)  push('neu','⚖️', en?`MVRV ${mv} — Fair`:`MVRV ${mv} · 合理`, en?'Balanced valuation':'估值处于合理区间');
+    else if (mvrv < 3)  push('neu','⚠️', en?`MVRV ${mv} — Stretched`:`MVRV ${mv} · 偏高`, en?'Extended — caution rising':'估值偏贵，警惕上升');
+    else                push('bear','🚨', en?`MVRV ${mv} — Overvalued`:`MVRV ${mv} · 高估`, en?'Historic top zone — extreme risk':'历史顶部风险区，极度高估');
+  }
+
+  // === 宏观：DXY ===
+  if (Number.isFinite(dxy)) {
+    if (dxy < 100)      push('bull','💵', en?`DXY ${dxy.toFixed(1)} — USD Weak`:`美元指数 ${dxy.toFixed(1)} · 走弱`, en?'Weak USD favors risk assets and BTC':'美元走弱利好风险资产和BTC');
+    else if (dxy > 106) push('bear','💵', en?`DXY ${dxy.toFixed(1)} — USD Strong`:`美元指数 ${dxy.toFixed(1)} · 强势`, en?'Strong USD pressures risk assets':'美元强势压制风险资产');
+    else                push('neu','💵', en?`DXY ${dxy.toFixed(1)}`:`美元指数 ${dxy.toFixed(1)}`, en?'USD in neutral range':'美元处于中性区间');
+  }
+
+  // === 宏观：10Y ===
+  if (Number.isFinite(y10)) {
+    if (y10 < 3.5)      push('bull','📉', en?`US 10Y ${y10.toFixed(2)}% — Low`:`美债10Y ${y10.toFixed(2)}% · 低位`, en?'Low risk-free rate — liquidity supportive':'无风险利率低位，流动性利好');
+    else if (y10 > 4.5) push('bear','📈', en?`US 10Y ${y10.toFixed(2)}% — High`:`美债10Y ${y10.toFixed(2)}% · 高位`, en?'High yields compete with risk assets':'高收益率压制风险资产估值');
+    else                push('neu','🏛️', en?`US 10Y ${y10.toFixed(2)}%`:`美债10Y ${y10.toFixed(2)}%`, en?'Yields in moderate range':'收益率中性');
+  }
+
+  // === 宏观：Fed ===
+  if (Number.isFinite(fed)) {
+    if (fed < 2)        push('bull','🏦', en?`Fed Funds ${fed.toFixed(2)}% — Easy`:`美联储利率 ${fed.toFixed(2)}% · 宽松`, en?'Near-zero rates — extreme liquidity':'接近零利率，流动性充裕');
+    else if (fed >= 4.25) push('bear','🏦', en?`Fed Funds ${fed.toFixed(2)}% — Tight`:`美联储利率 ${fed.toFixed(2)}% · 紧缩`, en?'Restrictive policy — pressure on risk assets':'限制性政策，压制风险资产');
+    else                push('neu','🏦', en?`Fed Funds ${fed.toFixed(2)}%`:`美联储利率 ${fed.toFixed(2)}%`, en?'Neutral policy stance':'政策中性');
+  }
+
+  // === 宏观：M2 ===
+  if (Number.isFinite(m2g)) {
+    if (m2g < 0)        push('bear','💰', en?`M2 YoY ${m2g.toFixed(1)}% — Contraction`:`M2 同比 ${m2g.toFixed(1)}% · 收缩`, en?'Liquidity contracting — bearish backdrop':'流动性收缩，宏观偏空');
+    else if (m2g > 6)   push('bull','💰', en?`M2 YoY +${m2g.toFixed(1)}% — Expansion`:`M2 同比 +${m2g.toFixed(1)}% · 扩张`, en?'Rapid liquidity expansion — bullish for BTC':'流动性快速扩张，利好BTC');
+    else                push('neu','💰', en?`M2 YoY ${m2g>=0?'+':''}${m2g.toFixed(1)}%`:`M2 同比 ${m2g>=0?'+':''}${m2g.toFixed(1)}%`, en?'Moderate liquidity growth':'流动性温和增长');
+  }
+
+  $('feed').innerHTML = sigs.map(s=>`
+    <div class="fi ${s.c}">
+      <div class="fi-time">${s.time}</div>
+      <div class="fi-icon">${s.ico}</div>
+      <div><div class="fi-title">${s.title}</div><div class="fi-desc">${s.desc}</div></div>
+      <div class="fi-tag ${s.cls}">${s.lbl}</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// UPDATE HERO
+// ═══════════════════════════════════════════════
+function updateHero(sc, price, fgVal, mcap, dom, hist, mvrvV, ahrV) {
+  const zone = sc<40?'BUY': sc<65?'HOLD':'RISK';
+  $('status-card').className = 'status-card '+zone;
+  $('status-word').textContent = t('zone_'+zone);
+  $('phase-tag').textContent   = cyclePhase(sc, price, hist, mvrvV, ahrV);
+  $('hero-tag').textContent    = t('tagline_'+zone);
+  countUp($('score-num'), sc);
+  $('score-thumb').style.left  = sc+'%';
+  if (price) $('p-btc').textContent  = usd(price);
+  if (fgVal) $('p-fg').textContent   = fgVal;
+  if (mcap)  $('p-mcap').textContent = usd(mcap);
+  if (dom)   $('p-dom').textContent  = dom.toFixed(1)+'%';
+}
+
+// ═══════════════════════════════════════════════
+// API — BINANCE (primary, no rate limit)
+// ═══════════════════════════════════════════════
+async function withTimeout(promise, ms=8000) {
+  return Promise.race([promise, new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
+}
+
+function getFetchTargets(url) {
+  const targets = [url];
+  if (location.protocol === 'file:') {
+    targets.push(
+      'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
+      'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url)
+    );
+  }
+  return targets;
+}
+
+async function fetchJSON(url, timeout=8000, options={}) {
+  let lastErr = null;
+  for (const target of getFetchTargets(url)) {
+    try {
+      const r = await withTimeout(fetch(target, options), timeout);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return await r.json();
+    } catch (e) {
+      lastErr = e;
+    }
+  }
+  throw lastErr || new Error('fetch failed');
+}
+
+async function getBinanceBTC() {
+  const d = await fetchJSON('/api/btc-ticker');
+  return {
+    price:     parseFloat(d.lastPrice),
+    change24h: parseFloat(d.priceChangePercent),
+    volume:    parseFloat(d.quoteVolume),
+  };
+}
+
+async function getCGGlobal() {
+  const d = await fetchJSON('/api/cg-global');
+  return d.data;
+}
+
+async function getBinanceHistory() {
+  const d = await fetchJSON('/api/btc-klines', 15000);
+  return Array.isArray(d) ? d.map(k => [parseInt(k[0], 10), parseFloat(k[4])]) : [];
+}
+
+async function getCGHistory() {
+  // 优先用 CoinGecko 完整历史；失败时退回 Binance 日线，至少保证 AHR999 可实时计算
+  try {
+    const d = await fetchJSON('/api/cg-history', 15000);
+    if (Array.isArray(d.prices) && d.prices.length) return d.prices;
+  } catch {}
+  return await getBinanceHistory();
+}
+
+async function getFearGreed() {
+  const d = await fetchJSON('https://api.alternative.me/fng/?limit=1');
+  return d.data?.[0] ?? null;
+}
+
+// 通用文本抓取（CSV 等），自动走 allorigins 代理绕过 CORS
+async function fetchText(url, timeout=10000) {
+  const proxied = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+  const r = await withTimeout(fetch(proxied), timeout);
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return await r.text();
+}
+
+// 宏观数据实时拉取：DXY / 10Y / Fed / M2
+async function getMacroLive() {
+  const out = {};
+
+  // DXY + 10Y 收益率 ← Yahoo Finance spark（同 MAG7 接口）
+  try {
+    const sparkUrl = 'https://query2.finance.yahoo.com/v8/finance/spark?symbols=DX-Y.NYB,%5ETNX&range=5d&interval=1d';
+    const r = await withTimeout(fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(sparkUrl)), 10000);
+    if (r.ok) {
+      const j = await r.json();
+      const data = typeof j.contents === 'string' ? JSON.parse(j.contents) : j;
+      const dxyClose = data['DX-Y.NYB']?.close;
+      const tnxClose = data['^TNX']?.close;
+      if (Array.isArray(dxyClose) && dxyClose.length) {
+        const last = dxyClose.filter(x => Number.isFinite(x)).pop();
+        if (last) out.dxy = last;
+      }
+      if (Array.isArray(tnxClose) && tnxClose.length) {
+        const last = tnxClose.filter(x => Number.isFinite(x)).pop();
+        if (last) out.y10 = last;
+      }
+    }
+  } catch(e) {}
+
+  // Fed Funds Rate ← FRED CSV（无需 Key）
+  try {
+    const csv = await fetchText('https://fred.stlouisfed.org/graph/fredgraph.csv?id=FEDFUNDS');
+    const lines = csv.trim().split('\n').filter(Boolean);
+    for (let i = lines.length - 1; i >= 1; i--) {
+      const [d, v] = lines[i].split(',');
+      const n = parseFloat(v);
+      if (Number.isFinite(n)) { out.fed = { v:n, date:d.substring(0,7) }; break; }
+    }
+  } catch(e) {}
+
+  // M2 同比增速 ← FRED M2SL，取最新 vs 12 个月前
+  try {
+    const csv = await fetchText('https://fred.stlouisfed.org/graph/fredgraph.csv?id=M2SL');
+    const rows = csv.trim().split('\n').slice(1)
+      .map(l => l.split(','))
+      .filter(r => Number.isFinite(parseFloat(r[1])));
+    if (rows.length >= 13) {
+      const last = rows[rows.length - 1];
+      const yAgo = rows[rows.length - 13];
+      const cur = parseFloat(last[1]), prev = parseFloat(yAgo[1]);
+      const growth = (cur - prev) / prev * 100;
+      out.m2 = { v:growth, date:last[0].substring(0,7) };
+    }
+  } catch(e) {}
+
+  return out;
+}
+
+function parseSparkResponse(j) {
+  if (!j || typeof j !== 'object') return null;
+  // /get endpoint wraps in { contents: "..." }
+  if (typeof j.contents === 'string') {
+    try { j = JSON.parse(j.contents); } catch { return null; }
+  }
+  const map = {};
+  for (const s of MAG7) {
+    const d = j[s.t];
+    if (!d?.close?.length) continue;
+    const price = d.close[d.close.length - 1];
+    const prev = d.chartPreviousClose ?? d.close[0] ?? price;
+    if (price) map[s.t] = { price, change24h: (price - prev) / prev * 100 };
+  }
+  return Object.keys(map).length > 0 ? map : null;
+}
+
+async function fetchAllStocks() {
+  const syms = MAG7.map(s=>s.t).join(',');
+  const sparkUrl = 'https://query2.finance.yahoo.com/v8/finance/spark?symbols=' + syms + '&range=2d&interval=1d';
+
+  // 同域 Worker 代理（最快最稳） → allorigins 回退
+  const attempts = [
+    // 1) 同域 Cloudflare Pages Function 代理，服务端直连 Yahoo，无 CORS 问题
+    withTimeout(fetch('/api/stocks'), 5000).then(async r => {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const map = await r.json();
+      if (!map || map.error || !Object.keys(map).length) throw new Error('empty');
+      return map;
+    }),
+    // 2) allorigins /get 回退
+    withTimeout(fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(sparkUrl)), 12000).then(async r => {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const j = await r.json();
+      const map = parseSparkResponse(j);
+      if (!map) throw new Error('no data');
+      return map;
+    }),
+    // 3) allorigins /raw 回退
+    withTimeout(fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(sparkUrl)), 12000).then(async r => {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const j = await r.json();
+      const map = parseSparkResponse(j);
+      if (!map) throw new Error('no data');
+      return map;
+    }),
+  ];
+
+  try {
+    return await Promise.any(attempts);
+  } catch {
+    return null;
+  }
+}
+
+// ═══════════════════════════════════════════════
+// API — BGEOMETRICS (free on-chain data, no key)
+// ═══════════════════════════════════════════════
+const BG_BASE = 'https://charts.bgeometrics.com/files/';
+async function getBGLatest(filename) {
+  const d = await fetchJSON(BG_BASE + filename, 12000);
+  if (!Array.isArray(d) || d.length < 2) return null;
+  // 返回最新值 [timestamp, value]
+  return d[d.length - 1][1];
+}
+
+async function getOnChainData() {
+  const [mcap, rcap, nupl] = await Promise.allSettled([
+    getBGLatest('market_cap.json'),
+    getBGLatest('realized_cap_capitalization.json'),
+    getBGLatest('nupl_7dma.json'),
+  ]);
+  const mc = mcap.status==='fulfilled' ? mcap.value : null;
+  const rc = rcap.status==='fulfilled' ? rcap.value : null;
+  const nuplVal = nupl.status==='fulfilled' ? nupl.value : null;
+  return {
+    mvrv: (mc && rc && rc > 0) ? mc / rc : null,
+    nupl: nuplVal,
+  };
+}
+
+// ═══════════════════════════════════════════════
+// MAIN REFRESH — progressive rendering
+// ═══════════════════════════════════════════════
+async function refresh() {
+  $('ts').textContent = t('updating');
+
+  // Show skeletons on first load (only above-fold sections)
+  const isFirstLoad = !lastRefreshAt;
+  if (isFirstLoad) {
+    renderSkeletons('btc-grid', 4);
+    renderSkeletons('macro-grid', 4);
+    renderSkeletons('chain-grid', 4);
+  }
+
+  // ── Phase 1: fast sources (Binance + F&G) ──
+  const [binance, fg] = await Promise.allSettled([
+    cachedFetch('binance', getBinanceBTC, 60000),
+    cachedFetch('fg', getFearGreed, 1800000),
+  ]);
+
+  const btcResult = binance.status==='fulfilled' ? binance.value : null;
+  const fgResult  = fg.status==='fulfilled'      ? fg.value      : null;
+  const btcData   = btcResult?.data ?? null;
+  const fgData    = fgResult?.data  ?? null;
+
+  let apiErrors = 0;
+  if (!btcData) apiErrors++;
+
+  // Update BTC price immediately
+  const btcCard = $('q-btc').closest('.qc');
+  if (btcData) {
+    $('q-btc').textContent = usd(btcData.price);
+    $('p-btc').textContent = usd(btcData.price);
+    const ce = $('q-btc-c');
+    ce.textContent = pct(btcData.change24h) + ' (24h)';
+    ce.className = 'qc-sub ' + (btcData.change24h>=0?'up':'down');
+    btcCard.classList.toggle('qc-stale', !!btcResult?.stale);
+  } else {
+    btcCard.classList.add('qc-stale');
+  }
+
+  if (fgData) {
+    const fgN = parseInt(fgData.value);
+    const MAP = {'Extreme Fear':'极度恐惧/Extreme Fear','Fear':'恐惧/Fear','Neutral':'中性/Neutral','Greed':'贪婪/Greed','Extreme Greed':'极度贪婪/Extreme Greed'};
+    const lbl = LANG==='en' ? fgData.value_classification : (MAP[fgData.value_classification]||fgData.value_classification).split('/')[0];
+    $('q-fg').textContent = fgN;
+    $('p-fg').textContent = fgN;
+    const fe = $('q-fg-c');
+    fe.textContent = lbl;
+    fe.className = 'qc-sub ' + (fgN<40?'up': fgN>60?'down':'neu');
+  }
+
+  // ── Phase 2: 流式并行渲染，每个数据到了立刻更新，不等其他 ──
+  let globalData = null, history = [], chainLive = {}, liveMap = {};
+  let histDone = false, chainDone = false, stocksDone = false;
+  const price = btcData?.price ?? 83000;
+
+  // 渲染辅助：重新计算指标并刷新所有卡片/hero
+  function renderAll() {
+    const btcInds   = buildBTC(price, history, chainLive.mvrv);
+    const macroInds = buildMacro();
+    const chainInds = buildChain(chainLive.nupl);
+    const sc        = calcScore([...btcInds, ...macroInds, ...chainInds]);
+    $('btc-grid').innerHTML   = btcInds.map(renderCard).join('');
+    $('macro-grid').innerHTML = macroInds.map(renderCard).join('');
+    $('chain-grid').innerHTML = chainInds.map(renderCard).join('');
+    const mvrvInd = btcInds.find(i=>i.id==='mvrv');
+    const ahrInd  = btcInds.find(i=>i.id==='ahr999');
+    updateHero(sc, btcData?.price, fgData?parseInt(fgData.value):null,
+      globalData?.total_market_cap?.usd, globalData?.market_cap_percentage?.btc,
+      history, mvrvInd ? parseFloat(mvrvInd.val) : null,
+      ahrInd  ? parseFloat(ahrInd.val) : null);
+    const scoreHist = saveScoreHistory(sc);
+    drawScoreSparkline('score-spark', scoreHist);
+  }
+
+  // 先用缓存数据快速渲染一次（如果有的话）
+  renderAll();
+  renderFeed(btcData ? btcData.change24h : null, btcData, fgData, chainLive, history);
+  renderMag7(liveMap);
+
+  // 启动所有请求，各自完成后立刻更新
+  const p_global = cachedFetch('cg-global', getCGGlobal, 300000).then(r => {
+    globalData = r?.data ?? null;
+    if (globalData) {
+      const mcap = globalData.total_market_cap?.usd;
+      const mcapChg = globalData.market_cap_change_percentage_24h_usd;
+      const dom = globalData.market_cap_percentage?.btc;
+      if (mcap) { $('q-mcap').textContent = usd(mcap); $('p-mcap').textContent = usd(mcap); }
+      if (dom)  { $('q-dom').textContent  = dom.toFixed(1)+'%'; $('p-dom').textContent = dom.toFixed(1)+'%'; }
+      if (mcapChg !== undefined) {
+        const me = $('q-mcap-c');
+        me.textContent = pct(mcapChg) + ' (24h)';
+        me.className = 'qc-sub ' + (mcapChg>=0?'up':'down');
+      }
+      renderAll();
+    }
+  }).catch(()=>{ apiErrors++; });
+
+  const p_hist = cachedFetch('cg-hist', getCGHistory, 3600000).then(r => {
+    history = r?.data ?? [];
+    histDone = true;
+    if (history.length) renderAll();
+    else apiErrors++;
+  }).catch(()=>{ apiErrors++; });
+
+  const p_onchain = cachedFetch('bg-onchain', getOnChainData, 3600000).then(r => {
+    chainLive = r?.data ?? {};
+    chainDone = true;
+    renderAll();
+  }).catch(()=>{});
+
+  // 宏观实时数据（DXY/10Y/Fed/M2），拿到后覆盖 MACRO 并刷新卡片和信号流
+  const p_macro = cachedFetch('macro-live', getMacroLive, 3600000).then(r => {
+    const m = r?.data ?? {};
+    const today = new Date().toISOString().substring(0,7);
+    if (Number.isFinite(m.dxy)) { MACRO.dxy = { v:m.dxy, date:today }; }
+    if (Number.isFinite(m.y10)) { MACRO.y10 = { v:m.y10, date:today }; }
+    if (m.fed?.v != null)       { MACRO.fed = m.fed; }
+    if (m.m2?.v  != null)       { MACRO.m2  = m.m2;  }
+    renderAll();
+    renderFeed(btcData ? btcData.change24h : null, btcData, fgData, chainLive, history);
+  }).catch(()=>{});
+
+  const p_stocks = cachedFetch('stk-batch', fetchAllStocks, 300000).then(r => {
+    const batch = r?.data ?? null;
+    if (batch) MAG7.forEach(s => { if (batch[s.t]) liveMap[s.t] = batch[s.t]; });
+    stocksDone = true;
+    renderMag7(liveMap);
+  }).catch(()=>{});
+
+  // 等所有完成后做最终收尾
+  await Promise.allSettled([p_global, p_hist, p_onchain, p_stocks, p_macro]);
+  // 所有数据到齐后，用完整上下文最后刷一次信号流
+  renderFeed(btcData ? btcData.change24h : null, btcData, fgData, chainLive, history);
+
+  const warn = $('api-warn');
+  if (apiErrors >= 2) {
+    warn.textContent = t('api_fail');
+    warn.classList.add('show');
+  } else {
+    warn.classList.remove('show');
+  }
+
+  // Hero bar flash on refresh
+  const bar = document.querySelector('.hero-bar');
+  bar.classList.remove('refreshed');
+  void bar.offsetWidth; // force reflow
+  bar.classList.add('refreshed');
+
+  // IntersectionObserver for fade-in
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('fade-in'); obs.unobserve(e.target); }});
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.ic, .qc, .sc, .fi').forEach(el => {
+    el.classList.remove('fade-in');
+    obs.observe(el);
+  });
+
+  // Timestamp + live relative timer
+  lastRefreshAt = Date.now();
+  $('ts').textContent = t('updated') + relTime(0);
+}
+
+// ═══════════════════════════════════════════════
+// I18N — update static DOM elements
+// ═══════════════════════════════════════════════
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    const v = t(k);
+    if (v.includes('<br>')) el.innerHTML = v;
+    else el.textContent = v;
+  });
+  document.documentElement.lang = LANG==='zh' ? 'zh-CN' : 'en';
+  document.title = LANG==='zh' ? 'BTB Public — 发现市场拐点' : 'BTB Public — Discover Market Inflection Points';
+  $('btn-lang').textContent = LANG==='zh' ? 'EN' : '中';
+}
+
+// ═══════════════════════════════════════════════
+// THEME TOGGLE
+// ═══════════════════════════════════════════════
+function toggleTheme() {
+  THEME = THEME==='dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', THEME);
+  $('btn-theme').textContent = THEME==='dark' ? '☀' : '🌙';
+  try { localStorage.setItem('btb-theme-v2', THEME); } catch {}
+}
+
+// ═══════════════════════════════════════════════
+// LANGUAGE TOGGLE
+// ═══════════════════════════════════════════════
+function toggleLang() {
+  LANG = LANG==='zh' ? 'en' : 'zh';
+  try { localStorage.setItem('btb-lang', LANG); } catch {}
+  applyI18n();
+  refresh(); // re-render dynamic content
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // Restore preferences
+  try {
+    const savedTheme = localStorage.getItem('btb-theme-v2');
+    const savedLang  = localStorage.getItem('btb-lang');
+    if (savedTheme) { THEME = savedTheme; document.documentElement.setAttribute('data-theme', THEME); }
+    if (savedLang)  { LANG  = savedLang; }
+    $('btn-theme').textContent = THEME==='dark' ? '☀' : '🌙';
+  } catch {}
+
+  applyI18n();
+  refresh();
+  setInterval(refresh, REFRESH_MS);
+
+  // Live relative timestamp ticker
+  setInterval(() => {
+    if (lastRefreshAt) {
+      $('ts').textContent = t('updated') + relTime(Date.now() - lastRefreshAt);
+    }
+  }, 1000);
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    switch (e.key.toLowerCase()) {
+      case 'r': e.preventDefault(); refresh(); break;
+      case 't': e.preventDefault(); toggleTheme(); break;
+      case 'l': e.preventDefault(); toggleLang(); break;
+    }
+  });
+});
+</script>
+</body>
+</html>
