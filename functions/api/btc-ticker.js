@@ -1,14 +1,12 @@
-// Binance BTCUSDT 24h 行情代理 - Cloudflare Pages Function
-// 访问路径: /api/btc-ticker
-// 用途：绕开 Binance 对部分地区(如美国)的浏览器 CORS 限制
-
+cat > ~/btb/functions/api/btc-ticker.js << 'EOF'
+// BTC 实时价格 - 使用 CoinGecko API
 export async function onRequest(context) {
-  const url = 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT';
+  const url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true';
 
   try {
     const response = await fetch(url, {
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible)' },
-      cf: { cacheTtl: 30, cacheEverything: true }, // 行情数据缓存 30 秒
+      cf: { cacheTtl: 30, cacheEverything: true },
     });
 
     if (!response.ok) {
@@ -16,7 +14,13 @@ export async function onRequest(context) {
     }
 
     const data = await response.json();
-    return jsonResponse(data);
+    const btc = data.bitcoin;
+
+    return jsonResponse({
+      lastPrice: btc.usd.toString(),
+      priceChangePercent: btc.usd_24h_change.toFixed(2),
+      volume: btc.usd_24h_vol?.toString() || '0',
+    });
   } catch (err) {
     return jsonResponse({ error: 'fetch failed', detail: err.message }, 502);
   }
@@ -32,3 +36,4 @@ function jsonResponse(data, status = 200) {
     },
   });
 }
+EOF
