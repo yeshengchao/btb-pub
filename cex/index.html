@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>币圈靠谱交易所</title>
+  <title>币圈靠谱交易所导航</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Noto+Sans+SC:wght@300;400&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -13,14 +12,8 @@
       --line: #e0dbd3;
       --text: #1a1814;
       --muted: #9a9590;
-      --bnb: #F0B90B;
-      --okx: #1a1a1a;
-      --bnb-soft: #fef9e6;
-      --okx-soft: #f0f0f0;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       background: var(--bg);
       color: var(--text);
@@ -32,8 +25,6 @@
       justify-content: center;
       padding: 40px 20px;
     }
-
-    /* Subtle noise texture overlay */
     body::before {
       content: '';
       position: fixed;
@@ -44,131 +35,47 @@
       pointer-events: none;
       z-index: 0;
     }
-
     .wrap {
       position: relative;
       z-index: 1;
       width: 100%;
       max-width: 440px;
-      animation: rise 0.7s cubic-bezier(0.16,1,0.3,1) both;
+      animation: rise 0.6s cubic-bezier(0.16,1,0.3,1) both;
     }
-
-    header {
-      text-align: center;
-      margin-bottom: 48px;
-    }
-
-    .logo-mark {
-      width: 36px;
-      height: 2px;
-      background: var(--text);
-      margin: 0 auto 20px;
-    }
-
-    header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.75rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      margin-bottom: 8px;
-    }
-
-    header p {
-      font-size: 0.8rem;
-      color: var(--muted);
-      font-weight: 300;
-      letter-spacing: 0.08em;
-    }
-
-    /* Cards */
+    header { text-align: center; margin-bottom: 40px; }
+    .logo-mark { width: 36px; height: 2px; background: var(--text); margin: 0 auto 20px; }
+    header h1 { font-family: 'Playfair Display', serif; font-size: 1.75rem; font-weight: 600; letter-spacing: 0.02em; margin-bottom: 8px; }
+    header p { font-size: 0.8rem; color: var(--muted); font-weight: 300; letter-spacing: 0.08em; }
+    .divider { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .divider-line { flex: 1; height: 1px; background: var(--line); }
+    .divider-text { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; }
+    #list { display: flex; flex-direction: column; gap: 14px; }
     .card {
       background: var(--surface);
       border: 1px solid var(--line);
       border-radius: 4px;
-      padding: 28px 32px;
-      margin-bottom: 16px;
+      padding: 22px 28px;
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 18px;
       text-decoration: none;
       color: inherit;
       transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-      animation: rise 0.7s cubic-bezier(0.16,1,0.3,1) both;
     }
-
-    .card:nth-child(1) { animation-delay: 0.05s; }
-    .card:nth-child(2) { animation-delay: 0.12s; }
-
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.08);
-    }
-
-    .card.bnb:hover { border-color: var(--bnb); }
-    .card.okx:hover { border-color: #555; }
-
-    /* Icon badge */
+    .card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
     .badge {
       flex-shrink: 0;
-      width: 48px;
-      height: 48px;
+      width: 46px; height: 46px;
       border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; font-weight: 700;
     }
-
-    .card.bnb .badge { background: var(--bnb-soft); color: #b8860b; }
-    .card.okx .badge { background: var(--okx-soft); color: var(--okx); }
-
     .card-body { flex: 1; min-width: 0; }
-
-    .card-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.05rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .card-sub {
-      font-size: 0.72rem;
-      color: var(--muted);
-      font-weight: 300;
-      letter-spacing: 0.04em;
-    }
-
-    .card-arrow {
-      font-size: 1rem;
-      color: var(--line);
-      transition: color 0.2s, transform 0.2s;
-    }
-
-    .card:hover .card-arrow {
-      color: var(--muted);
-      transform: translateX(4px);
-    }
-
-    /* Copy URL button area */
-    .actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
+    .card-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
     .btn-copy {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 5px 12px;
-      font-size: 0.7rem;
-      font-family: 'Noto Sans SC', sans-serif;
-      font-weight: 400;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px;
+      font-size: 0.68rem; font-family: 'Noto Sans SC', sans-serif; font-weight: 400;
       color: var(--muted);
       background: transparent;
       border: 1px solid var(--line);
@@ -177,96 +84,107 @@
       transition: all 0.2s;
       letter-spacing: 0.04em;
     }
-
     .btn-copy:hover { color: var(--text); border-color: var(--muted); }
     .btn-copy.copied { color: #4caf7d; border-color: #4caf7d; }
-
-    /* Divider */
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 8px 0 24px;
-    }
-    .divider-line { flex: 1; height: 1px; background: var(--line); }
-    .divider-text { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; }
-
-    footer {
-      text-align: center;
-      margin-top: 40px;
-      font-size: 0.7rem;
-      color: var(--line);
-      letter-spacing: 0.06em;
-    }
-
-    @keyframes rise {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    .card-arrow { font-size: 1rem; color: var(--line); transition: color 0.2s, transform 0.2s; }
+    .card:hover .card-arrow { color: var(--muted); transform: translateX(4px); }
+    footer { text-align: center; margin-top: 36px; font-size: 0.7rem; color: var(--line); letter-spacing: 0.06em; }
+    @keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
-  <div class="wrap">
-
-    <header>
-      <div class="logo-mark"></div>
-      <h1>币圈靠谱交易所</h1>
-      <p>REFERRAL · LINKS</p>
-    </header>
-
-    <div class="divider">
-      <div class="divider-line"></div>
-      <span class="divider-text">点击访问 / 复制链接</span>
-      <div class="divider-line"></div>
-    </div>
-
-    <!-- 币安 -->
-    <a class="card bnb" href="https://www.bsmkweb.cc/referral/earn-together/refer2earn-usdc/claim?hl=zh-CN&ref=GRO_28502_7RJ8H" target="_blank">
-      <div class="badge">B</div>
-      <div class="card-body">
-        <div class="card-title">币安 Binance</div>
-        <div class="actions">
-          <button class="btn-copy" onclick="copyLink(event, 'https://www.bsmkweb.cc/referral/earn-together/refer2earn-usdc/claim?hl=zh-CN&ref=GRO_28502_7RJ8H')">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            复制链接
-          </button>
-        </div>
-      </div>
-      <span class="card-arrow">→</span>
-    </a>
-
-    <!-- 欧易 OKX -->
-    <a class="card okx" href="https://www.oqmmpieralz.com/join/2064333" target="_blank">
-      <div class="badge">O</div>
-      <div class="card-body">
-        <div class="card-title">欧易 OKX</div>
-        <div class="actions">
-          <button class="btn-copy" onclick="copyLink(event, 'https://www.oqmmpieralz.com/join/2064333')">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            复制链接
-          </button>
-        </div>
-      </div>
-      <span class="card-arrow">→</span>
-    </a>
-
-    <footer>— 仅供个人使用 —</footer>
+<div class="wrap">
+  <header>
+    <div class="logo-mark"></div>
+    <h1>靠谱交易所</h1>
+    <p>REFERRAL · LINKS</p>
+  </header>
+  <div class="divider">
+    <div class="divider-line"></div>
+    <span class="divider-text">点击访问 / 复制链接到浏览器打开</span>
+    <div class="divider-line"></div>
   </div>
+  <div id="list"></div>
+  <footer>— 仅供个人使用 —</footer>
+</div>
 
-  <script>
-    function copyLink(e, url) {
+<script>
+  /* =====================================================
+   * ✏️  【只需修改这里】添加 / 修改推广链接
+   *
+   * 每个平台一个对象，格式：
+   * {
+   *   name:  '平台名称',      ← 显示的名字
+   *   badge: 'B',             ← 左侧图标（1~2个字符）
+   *   color: '#fef3c7',       ← 图标背景色（浅色）
+   *   url:   'https://...'    ← 推广链接
+   * }
+   *
+   * 新增平台：在最后一项后面加一个逗号，再粘贴一个对象即可。
+   * ===================================================== */
+  const links = [
+    {
+      name:  '币安 Binance',
+      badge: 'B',
+      color: '#fef3c7',
+      url:   'https://www.bsmkweb.cc/referral/earn-together/refer2earn-usdc/claim?hl=zh-CN&ref=GRO_28502_7RJ8H'
+    },
+    {
+      name:  '欧易 OKX',
+      badge: 'O',
+      color: '#f0f0f0',
+      url:   'https://www.oqmmpieralz.com/join/2064333'
+    },
+    // 👇 在这里继续添加，复制以下模板取消注释即可：
+    // {
+    //   name:  '新平台名称',
+    //   badge: 'N',
+    //   color: '#e0f0ff',
+    //   url:   'https://新链接地址'
+    // },
+  ];
+
+  /* ====================================================
+   * 以下代码无需修改
+   * ==================================================== */
+  const COPY_ICON = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+  const CHECK_ICON = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+  const list = document.getElementById('list');
+
+  links.forEach((item, i) => {
+    const card = document.createElement('a');
+    card.className = 'card';
+    card.href = item.url;
+    card.target = '_blank';
+    card.rel = 'noopener noreferrer';
+    card.style.animation = `rise 0.6s cubic-bezier(0.16,1,0.3,1) ${i * 0.07}s both`;
+
+    card.innerHTML = `
+      <div class="badge" style="background:${item.color}">${item.badge}</div>
+      <div class="card-body">
+        <div class="card-title">${item.name}</div>
+        <button class="btn-copy" data-url="${item.url}">${COPY_ICON} 复制链接到浏览器打开</button>
+      </div>
+      <span class="card-arrow">→</span>
+    `;
+
+    card.querySelector('.btn-copy').addEventListener('click', function(e) {
       e.preventDefault();
       e.stopPropagation();
-      navigator.clipboard.writeText(url).then(() => {
-        const btn = e.currentTarget;
+      const btn = this;
+      navigator.clipboard.writeText(btn.dataset.url).then(() => {
         btn.classList.add('copied');
-        btn.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 已复制`;
+        btn.innerHTML = CHECK_ICON + ' 已复制';
         setTimeout(() => {
           btn.classList.remove('copied');
-          btn.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> 复制链接`;
+          btn.innerHTML = COPY_ICON + ' 复制链接到浏览器打开';
         }, 2000);
       });
-    }
-  </script>
+    });
+
+    list.appendChild(card);
+  });
+</script>
 </body>
 </html>
