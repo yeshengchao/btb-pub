@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="3; url=https://www.bsmkweb.cc/referral/earn-together/refer2earn-usdc/claim?hl=zh-CN&ref=GRO_28502_7RJ8H">
+  <title>正在跳转到币安交易所...</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Space+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #f0d080;
+      --dark: #0a0a0f;
+      --darker: #06060a;
+      --text: #e8e0d0;
+      --muted: #7a7060;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--dark);
+      color: var(--text);
+      font-family: 'Noto Serif SC', serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Background grid */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      z-index: 0;
+    }
+
+    /* Radial glow */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(201,168,76,0.08) 0%, transparent 70%);
+      z-index: 0;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      width: min(480px, 90vw);
+      padding: 56px 48px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 2px;
+      text-align: center;
+      animation: fadeIn 0.8s ease both;
+    }
+
+    /* Corner accents */
+    .card::before, .card::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-color: var(--gold);
+      border-style: solid;
+    }
+    .card::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+    .card::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+    .icon-ring {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 32px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(201,168,76,0.05);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .icon-ring svg {
+      width: 32px;
+      height: 32px;
+      stroke: var(--gold);
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--gold-light);
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 40px;
+    }
+
+    /* Progress bar */
+    .progress-track {
+      width: 100%;
+      height: 2px;
+      background: rgba(201,168,76,0.1);
+      border-radius: 1px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius: 1px;
+      animation: fillBar 3s linear forwards;
+      box-shadow: 0 0 8px rgba(201,168,76,0.5);
+    }
+
+    .counter {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      margin-bottom: 32px;
+    }
+
+    .counter span {
+      color: var(--gold);
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 32px;
+      background: transparent;
+      border: 1px solid rgba(201,168,76,0.4);
+      color: var(--gold-light);
+      text-decoration: none;
+      font-family: 'Noto Serif SC', serif;
+      font-size: 0.875rem;
+      letter-spacing: 0.1em;
+      border-radius: 1px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: rgba(201,168,76,0.08);
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(201,168,76,0.15);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.15); }
+      50%       { box-shadow: 0 0 0 12px rgba(201,168,76,0); }
+    }
+
+    @keyframes fillBar {
+      from { width: 0%; }
+      to   { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="icon-ring">
+      <svg viewBox="0 0 24 24">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+      </svg>
+    </div>
+
+    <h1>即将跳转</h1>
+    <p class="subtitle">正在为您导航至目标页面<br>请稍候片刻…</p>
+
+    <div class="progress-track">
+      <div class="progress-fill"></div>
+    </div>
+
+    <p class="counter" id="counter">
+      <span id="num">3</span> 秒后自动跳转
+    </p>
+
+    <a class="btn" href="https://www.bsmkweb.cc/referral/earn-together/refer2earn-usdc/claim?hl=zh-CN&ref=GRO_28502_7RJ8H">
+      立即前往 →
+    </a>
+  </div>
+
+  <script>
+    let t = 3;
+    const num = document.getElementById('num');
+    const iv = setInterval(() => {
+      t--;
+      num.textContent = t;
+      if (t <= 0) {
+        clearInterval(iv);
+        document.getElementById('counter').textContent = '正在跳转...';
+        window.location.href = 'https://www.bsmkweb.cc/referral/earn-together/refer2earn-usdc/claim?hl=zh-CN&ref=GRO_28502_7RJ8H';
+      }
+    }, 1000);
+  </script>
+
+</body>
+</html>
